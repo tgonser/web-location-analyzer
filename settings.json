@@ -1,0 +1,7 @@
+{
+  "distance_threshold": 2000.0,
+  "probability_threshold": 0.2,
+  "duration_threshold": 2000,
+  "from_date": "2025-01-01",
+  "to_date": "2025-09-01"
+}

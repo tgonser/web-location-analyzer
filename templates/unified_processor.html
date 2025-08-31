@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Location Processor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .workflow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .workflow-steps::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 12%;
+            right: 12%;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .step {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 50px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            border-color: #2196F3;
+            background: #2196F3;
+            color: white;
+        }
+
+        .step-label {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .step.active + .step-label {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .step-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .step-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-title::before {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+            border-radius: 50%;
+            background: #2196F3;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input[type="file"],
+        .form-group input[type="date"],
+        .form-group input[type="number"],
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #757575, #616161);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 20px rgba(117, 117, 117, 0.3);
+        }
+
+        .progress-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2196F3, #21CBF3);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9em;
+            color: #666;
+            text-align: center;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status-success {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .status-error {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+
+        .status-info {
+            background: #e3f2fd;
+            border: 1px solid #2196F3;
+            color: #1565c0;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #2196F3;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(33, 150, 243, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .file-upload-area.dragover {
+            border-color: #1976d2;
+            background: rgba(33, 150, 243, 0.15);
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            color: #2196F3;
+            margin-bottom: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .info-box {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #e65100;
+        }
+
+        .results-preview {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
+
+        .file-item-info {
+            flex-grow: 1;
+        }
+
+        .file-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+            min-width: auto;
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80%;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: #2196F3;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .cache-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cache-stat {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .cache-stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2196F3;
+        }
+
+        .cache-stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Unified Location Processor</h1>
+            <p>Parse Google location data and generate comprehensive travel analysis</p>
+        </div>
+        
+        <div class="content">
+            <!-- Workflow Steps Indicator -->
+            <div class="workflow-steps">
+                <div>
+                    <div class="step active" id="step-1">1</div>
+                    <div class="step-label">Parse Data</div>
+                </div>
+                <div>
+                    <div class="step" id="step-2">2</div>
+                    <div class="step-label">Analyze & Geocode</div>
+                </div>
+                <div>
+                    <div class="step" id="step-3">3</div>
+                    <div class="step-label">View Results</div>
+                </div>
+            </div>
+
+            <!-- Status Messages -->
+            <div id="status-message" class="status-message"></div>
+
+            <!-- Step 1: Parse Raw Google JSON -->
+            <div class="step-section active" id="section-1">
+                <h2 class="step-title">Step 1: Parse Google Location History</h2>
+                
+                <div class="info-box">
+                    <strong>Upload your raw Google Location History JSON file.</strong> 
+                    This should be the mobile download version, not the Google Takeout version.
+                </div>
+
+                <form id="parse-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Raw Google Location JSON File</label>
+                        <div class="file-upload-area" onclick="document.getElementById('raw-file').click()">
+                            <div class="upload-icon">📁</div>
+                            <p>Click to select or drag and drop your location-history.json file</p>
+                            <input type="file" id="raw-file" name="file" accept=".json" style="display: none;" required>
+                        </div>
+                        <div id="file-info" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Parse From Date</label>
+                            <input type="date" name="parse_from_date" value="{{ config.get('last_start_date', '2024-01-01') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Parse To Date</label>
+                            <input type="date" name="parse_to_date" value="{{ config.get('last_end_date', today) }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>Distance Threshold (m)</label>
+                            <input type="number" name="distance_threshold" value="{{ config.get('distance_threshold', 200) }}" min="50" max="2000">
+                        </div>
+                        <div class="form-group">
+                            <label>Probability Threshold</label>
+                            <input type="number" name="probability_threshold" value="{{ config.get('probability_threshold', 0.1) }}" min="0" max="1" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration Threshold (s)</label>
+                            <input type="number" name="duration_threshold" value="{{ config.get('duration_threshold', 600) }}" min="60" max="3600">
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn" id="parse-btn">Parse Location Data</button>
+                    </div>
+                </form>
+
+                <div class="progress-container" id="parse-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="parse-progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="parse-progress-text">Initializing...</div>
+                </div>
+            </div>
+
+            <!-- Step 2: Upload Pre-parsed File (Alternative) -->
+            <div class="step-section" id="section-1b" style="display: none;">
+                <h2 class="step-title">Alternative: Upload Pre-parsed File</h2>
+                
+                <div class="info-box">
+                    <strong>Already have a cleaned/parsed location file?</strong> 
+                    Upload it directly to skip to the analysis step.
+                </div>
+
+                <form id="parsed-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Pre-parsed Location JSON File</label>
+                        <input type="file" name="file" accept=".json" required>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn">Upload Parsed File</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 2: Analyze and Geocode -->
+            <div class="step-section" id="section-2">
+                <h2 class="step-title">Step 2: Geocode and Analyze</h2>
+
+                <div class="info-box">
+                    <strong>API Keys Required:</strong> You need a Geoapify API key for geocoding. 
+                    Google Maps API key is optional but recommended for better results.
+                    {% if cache_stats.entries > 0 %}
+                    <br><br><strong>Geocoding Cache:</strong> {{ cache_stats.entries }} cached locations 
+                    ({{ cache_stats.file_size_kb }} KB) will reduce API calls.
+                    {% endif %}
+                </div>
+
+                <form id="analyze-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Analysis Start Date</label>
+                            <input type="date" name="start_date" value="{{ config.get('last_start_date', '2024-01-01') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Analysis End Date</label>
+                            <input type="date" name="end_date" value="{{ config.get('last_end_date', today) }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Geoapify API Key (Required)</label>
+                        <input type="text" name="geoapify_key" value="{{ config.get('geoapify_key', '') }}" required 
+                               placeholder="Enter your Geoapify API key">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Google Maps API Key (Optional)</label>
+                        <input type="text" name="google_key" value="{{ config.get('google_key', '') }}" 
+                               placeholder="Enter your Google Maps API key for enhanced results">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn" id="analyze-btn" disabled>Start Analysis</button>
+                    </div>
+                </form>
+
+                <div class="progress-container" id="analyze-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="analyze-progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="analyze-progress-text">Ready for analysis...</div>
+                </div>
+            </div>
+
+            <!-- Step 3: Results -->
+            <div class="step-section" id="section-3">
+                <h2 class="step-title">Step 3: View Results</h2>
+
+                <div class="results-preview" id="results-container">
+                    <p>Results will appear here after analysis completes...</p>
+                </div>
+            </div>
+
+            <!-- Toggle for Alternative Upload -->
+            <div style="text-align: center; margin-top: 30px;">
+                <button type="button" class="btn btn-secondary" onclick="toggleUploadMode()" id="toggle-mode-btn">
+                    Use Pre-parsed File Instead
+                </button>
+                {% if cache_stats.entries > 0 %}
+                <button type="button" class="btn btn-secondary" onclick="showCacheManager()" style="margin-left: 15px;">
+                    Manage Cache ({{ cache_stats.entries }} entries)
+                </button>
+                {% endif %}
+            </div>
+            
+            <!-- Cache Manager Modal -->
+            <div id="cacheModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Geocoding Cache Manager</h3>
+                        <button class="close-btn" onclick="closeCacheManager()">&times;</button>
+                    </div>
+                    <div class="modal-body" id="cacheModalBody">
+                        <p>Loading cache information...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTaskId = null;
+        let currentStep = 1;
+        let uploadMode = 'raw'; // 'raw' or 'parsed'
+
+        // File upload handling
+        document.getElementById('raw-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const info = document.getElementById('file-info');
+                info.textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+            }
+        });
+
+        // Drag and drop
+        const uploadArea = document.querySelector('.file-upload-area');
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('raw-file').files = files;
+                document.getElementById('raw-file').dispatchEvent(new Event('change'));
+            }
+        });
+
+        function toggleUploadMode() {
+            const btn = document.getElementById('toggle-mode-btn');
+            const section1 = document.getElementById('section-1');
+            const section1b = document.getElementById('section-1b');
+
+            if (uploadMode === 'raw') {
+                uploadMode = 'parsed';
+                section1.style.display = 'none';
+                section1b.style.display = 'block';
+                section1b.classList.add('active');
+                btn.textContent = 'Use Raw Google JSON Instead';
+            } else {
+                uploadMode = 'raw';
+                section1.style.display = 'block';
+                section1.classList.add('active');
+                section1b.style.display = 'none';
+                section1b.classList.remove('active');
+                btn.textContent = 'Use Pre-parsed File Instead';
+            }
+        }
+
+        // Parse form submission
+        document.getElementById('parse-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const parseBtn = document.getElementById('parse-btn');
+            const progressContainer = document.getElementById('parse-progress');
+            
+            parseBtn.disabled = true;
+            progressContainer.classList.add('active');
+            
+            showStatus('Starting location data parsing...', 'info');
+            
+            fetch('/upload_raw', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.task_id) {
+                    currentTaskId = data.task_id;
+                    pollProgress('parse');
+                } else {
+                    showStatus('Error: ' + (data.error || 'Unknown error'), 'error');
+                    parseBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                showStatus('Error: ' + error.message, 'error');
+                parseBtn.disabled = false;
+            });
+        });
+
+        // Parsed file form submission  
+        document.getElementById('parsed-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/upload_parsed', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.task_id) {
+                    currentTaskId = data.task_id;
+                    showStatus('Pre-parsed file uploaded successfully!', 'success');
+                    moveToStep(2);
+                    document.getElementById('analyze-btn').disabled = false;
+                } else {
+                    showStatus('Error: ' + (data.error || 'Unknown error'), 'error');
+                }
+            })
+            .catch(error => {
+                showStatus('Error: ' + error.message, 'error');
+            });
+        });
+
+        // Analysis form submission
+        document.getElementById('analyze-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentTaskId) {
+                showStatus('No parsed data available. Please complete step 1 first.', 'error');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const progressContainer = document.getElementById('analyze-progress');
+            
+            analyzeBtn.disabled = true;
+            progressContainer.classList.add('active');
+            
+            showStatus('Starting location analysis and geocoding...', 'info');
+            
+            fetch(`/analyze/${currentTaskId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    pollProgress('analyze');
+                } else {
+                    showStatus('Error: ' + (data.error || 'Unknown error'), 'error');
+                    analyzeBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                showStatus('Error: ' + error.message, 'error');
+                analyzeBtn.disabled = false;
+            });
+        });
+
+        function pollProgress(phase) {
+            if (!currentTaskId) return;
+            
+            fetch(`/progress/${currentTaskId}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateProgress(phase, data);
+                    
+                    if (data.status === 'SUCCESS') {
+                        if (phase === 'parse' && data.step === 'parsed') {
+                            // Parsing complete, move to analysis
+                            showStatus('Parsing complete! Ready for analysis.', 'success');
+                            moveToStep(2);
+                            document.getElementById('analyze-btn').disabled = false;
+                            // Auto-populate analysis dates from parsing dates
+                            if (data.parse_dates_used) {
+                                document.querySelector('input[name="start_date"]').value = data.parse_dates_used.from;
+                                document.querySelector('input[name="end_date"]').value = data.parse_dates_used.to;
+                                console.log('Analysis dates auto-filled from parsing range:', data.parse_dates_used.from, 'to', data.parse_dates_used.to);
+                            }
+                        } else if (phase === 'analyze' && data.analysis_complete) {
+                            // Analysis complete, redirect to results - BUG FIX #1: Use standard redirect
+                            showStatus('Analysis complete! Redirecting to results...', 'success');
+                            
+                            setTimeout(() => {
+                                window.location.href = `/results/${currentTaskId}`;
+                            }, 1000);
+                        } else {
+                            // Continue polling
+                            setTimeout(() => pollProgress(phase), 1000);
+                        }
+                    } else if (data.status === 'FAILURE') {
+                        showStatus('Error: ' + (data.error || data.message), 'error');
+                        resetButtons();
+                    } else {
+                        // Continue polling
+                        setTimeout(() => pollProgress(phase), 1000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Progress polling error:', error);
+                    setTimeout(() => pollProgress(phase), 2000);
+                });
+        }
+
+        function updateProgress(phase, data) {
+            const progressFill = document.getElementById(`${phase}-progress-fill`);
+            const progressText = document.getElementById(`${phase}-progress-text`);
+            
+            if (progressFill && progressText) {
+                progressFill.style.width = `${data.percentage || 0}%`;
+                progressText.textContent = data.message || 'Processing...';
+            }
+        }
+
+        function moveToStep(stepNumber) {
+            // Update step indicators
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step-${i}`);
+                if (i <= stepNumber) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            }
+            
+            // Update visible sections
+            for (let i = 1; i <= 3; i++) {
+                const section = document.getElementById(`section-${i}`);
+                if (i === stepNumber) {
+                    section.classList.add('active');
+                    section.style.display = 'block';
+                } else {
+                    section.classList.remove('active');
+                    if (i !== 1 || uploadMode === 'raw') {
+                        section.style.display = 'none';
+                    }
+                }
+            }
+            
+            currentStep = stepNumber;
+        }
+
+        function showResults(data) {
+            const resultsContainer = document.getElementById('results-container');
+            
+            let html = '<div class="results-summary">';
+            html += `<h3>Analysis Complete!</h3>`;
+            
+            if (data.result) {
+                html += `<p><strong>Processing Summary:</strong></p>`;
+                html += `<ul>`;
+                if (data.parse_stats) {
+                    html += `<li>Activities: ${data.parse_stats.activities || 0}</li>`;
+                    html += `<li>Visits: ${data.parse_stats.visits || 0}</li>`;
+                    html += `<li>Timeline Paths: ${data.parse_stats.timeline_paths || 0}</li>`;
+                }
+                html += `</ul>`;
+            }
+            
+            html += '<h4>Generated Files:</h4>';
+            if (data.generated_files && data.generated_files.length > 0) {
+                html += '<ul class="file-list">';
+                data.generated_files.forEach(file => {
+                    const isHtml = file.endsWith('.html');
+                    html += `<li class="file-item">`;
+                    html += `<div class="file-item-info">`;
+                    html += `<strong>${file}</strong>`;
+                    html += `<div>${isHtml ? 'HTML View' : 'CSV Data'}</div>`;
+                    html += `</div>`;
+                    html += `<div class="file-item-actions">`;
+                    if (isHtml) {
+                        html += `<a href="/view/${data.output_dir}/${file}" target="_blank" class="btn btn-small">View</a>`;
+                    }
+                    html += `<a href="/download/${data.output_dir}/${file}" class="btn btn-small">Download</a>`;
+                    html += `</div>`;
+                    html += `</li>`;
+                });
+                html += '</ul>';
+                
+                html += `<div style="margin-top: 20px; text-align: center;">`;
+                html += `<a href="/download_all/${currentTaskId}" class="btn">Download All Results (ZIP)</a>`;
+                if (currentTaskId) {
+                    html += `<a href="/results/${currentTaskId}" class="btn btn-success" style="margin-left: 10px;">Full Results Page</a>`;
+                }
+                html += `</div>`;
+            } else {
+                html += '<p>No files generated.</p>';
+            }
+            
+            html += '</div>';
+            
+            resultsContainer.innerHTML = html;
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status-message');
+            statusEl.className = `status-message status-${type}`;
+            statusEl.textContent = message;
+            statusEl.style.display = 'block';
+            
+            if (type === 'success' || type === 'error') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function resetButtons() {
+            document.getElementById('parse-btn').disabled = false;
+            document.getElementById('analyze-btn').disabled = currentTaskId ? false : true;
+        }
+
+        function showCacheManager() {
+            const modal = document.getElementById('cacheModal');
+            const modalBody = document.getElementById('cacheModalBody');
+            
+            modalBody.innerHTML = '<p>Loading cache information...</p>';
+            modal.style.display = 'block';
+            
+            // Fetch cache info
+            fetch('/cache_info')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '<div class="cache-stats">';
+                    html += `<div class="cache-stat">
+                                <div class="cache-stat-number">${data.total_entries}</div>
+                                <div class="cache-stat-label">Total Entries</div>
+                             </div>`;
+                    html += `<div class="cache-stat">
+                                <div class="cache-stat-number">${data.geocode_entries}</div>
+                                <div class="cache-stat-label">Geocode Cache</div>
+                             </div>`;
+                    html += `<div class="cache-stat">
+                                <div class="cache-stat-number">${data.water_entries}</div>
+                                <div class="cache-stat-label">Water Detection</div>
+                             </div>`;
+                    html += `<div class="cache-stat">
+                                <div class="cache-stat-number">${data.file_size_kb} KB</div>
+                                <div class="cache-stat-label">Cache File Size</div>
+                             </div>`;
+                    html += '</div>';
+                    
+                    html += '<div style="margin-top: 20px;">';
+                    html += '<h4>About the Cache</h4>';
+                    html += '<p>The geocoding cache stores previously looked-up locations to avoid redundant API calls. ';
+                    html += 'This significantly speeds up analysis and saves API quota.</p>';
+                    html += '<ul style="margin: 15px 0; padding-left: 20px;">';
+                    html += '<li><strong>Geocode entries:</strong> City/country lookups from coordinates</li>';
+                    html += '<li><strong>Water detection:</strong> Land vs water classification for travel mode detection</li>';
+                    html += '</ul>';
+                    html += '</div>';
+                    
+                    html += '<div style="text-align: center; margin-top: 30px;">';
+                    html += '<button onclick="clearCache()" class="btn" style="background: #f44336;">Clear Cache</button>';
+                    html += '</div>';
+                    
+                    modalBody.innerHTML = html;
+                })
+                .catch(error => {
+                    modalBody.innerHTML = `<p>Error loading cache information: ${error.message}</p>`;
+                });
+        }
+
+        function clearCache() {
+            if (!confirm('Are you sure you want to clear the geocoding cache? This will require re-geocoding locations on the next analysis.')) {
+                return;
+            }
+            
+            fetch('/clear_cache', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        showStatus('Cache cleared successfully', 'success');
+                        closeCacheManager();
+                        // Refresh page to update cache stats
+                        location.reload();
+                    } else {
+                        showStatus('Error clearing cache: ' + (data.error || 'Unknown error'), 'error');
+                    }
+                })
+                .catch(error => {
+                    showStatus('Error clearing cache: ' + error.message, 'error');
+                });
+        }
+
+        function closeCacheManager() {
+            document.getElementById('cacheModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('cacheModal');
+            if (event.target === modal) {
+                closeCacheManager();
+            }
+        }
+    </script>
+</body>
+</html>
