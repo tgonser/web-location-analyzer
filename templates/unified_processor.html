@@ -485,15 +485,18 @@
                     <div class="form-row-3">
                         <div class="form-group">
                             <label>Distance Threshold (m)</label>
-                            <input type="number" name="distance_threshold" value="{{ config.get('distance_threshold', 200) }}" min="50" max="2000">
+                            <input type="number" name="distance_threshold" value="{{ config.get('distance_threshold', 200) }}" min="50" max="10000">
+                            <small style="color: #666;">Minimum distance between points to keep (50m - 10km)</small>
                         </div>
                         <div class="form-group">
                             <label>Probability Threshold</label>
                             <input type="number" name="probability_threshold" value="{{ config.get('probability_threshold', 0.1) }}" min="0" max="1" step="0.1">
+                            <small style="color: #666;">Minimum confidence score for locations (0.0 - 1.0)</small>
                         </div>
                         <div class="form-group">
                             <label>Duration Threshold (s)</label>
-                            <input type="number" name="duration_threshold" value="{{ config.get('duration_threshold', 600) }}" min="60" max="3600">
+                            <input type="number" name="duration_threshold" value="{{ config.get('duration_threshold', 600) }}" min="60" max="86400">
+                            <small style="color: #666;">Minimum time at a location to keep (60=1 min - 86400=24 hours)</small>
                         </div>
                     </div>
 
