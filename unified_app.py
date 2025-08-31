@@ -203,6 +203,247 @@ class LocationProcessor:
         self.log(f"Date filtering complete: {len(relevant_entries):,} entries in range")
         return relevant_entries
 
+    def sample_points(self, points: list, max_points: int) -> list:
+        """Sample points evenly, always preserving first and last points."""
+        if len(points) <= max_points:
+            return points
+        
+        if max_points < 2:
+            return [points[0]]  # At least keep the first point
+        
+        sampled = [points[0]]  # Always keep first point
+        
+        if max_points > 2:
+            # Calculate indices for middle points
+            middle_count = max_points - 2
+            if middle_count > 0:
+                # Create evenly spaced indices between first and last
+                step_size = (len(points) - 1) / (middle_count + 1)
+                for i in range(1, middle_count + 1):
+                    index = int(round(i * step_size))
+                    if index < len(points) - 1:  # Don't duplicate the last point
+                        sampled.append(points[index])
+        
+        # Always keep last point (unless it's the same as first)
+        if len(points) > 1:
+            sampled.append(points[-1])
+        
+        return sampled
+
+    def process_entry(self, entry: dict, settings: dict):
+        """Process a single entry based on its type."""
+        try:
+            # Determine entry type and extract data
+            if 'activity' in entry:
+                return self.process_activity(entry, settings)
+            elif 'visit' in entry:
+                return self.process_visit(entry, settings)
+            elif 'timelinePath' in entry:
+                return self.process_timeline_path(entry, settings)
+            elif 'timestampMs' in entry:
+                return self.process_legacy_location(entry, settings)
+            else:
+                return None
+        except Exception as e:
+            return None
+    
+    def process_activity(self, entry: dict, settings: dict):
+        """Process activity entry."""
+        try:
+            activity = entry['activity']
+            
+            # Get coordinates
+            start_coords = self.parse_coordinates(activity.get('start'))
+            end_coords = self.parse_coordinates(activity.get('end'))
+            if not start_coords or not end_coords:
+                return None
+            
+            # Check distance threshold
+            distance = float(activity.get('distanceMeters', 0))
+            if distance < settings.get('distance_threshold', 200):
+                return None
+            
+            self.stats['activities'] += 1
+            return {
+                'startTime': entry['startTime'],
+                'endTime': entry['endTime'],
+                'activity': {
+                    'start': f"geo:{start_coords[0]:.6f},{start_coords[1]:.6f}",
+                    'end': f"geo:{end_coords[0]:.6f},{end_coords[1]:.6f}",
+                    'distanceMeters': str(int(distance)),
+                    'topCandidate': activity.get('topCandidate', {}),
+                    'probability': str(activity.get('probability', 0.0))
+                }
+            }
+        except:
+            return None
+    
+    def process_visit(self, entry: dict, settings: dict):
+        """Process visit entry."""
+        try:
+            visit = entry['visit']
+            
+            # Get coordinates
+            coords = None
+            if 'topCandidate' in visit and 'placeLocation' in visit['topCandidate']:
+                coords = self.parse_coordinates(visit['topCandidate']['placeLocation'])
+            if not coords:
+                return None
+            
+            # Check duration threshold
+            start_dt = self.parse_timestamp(entry['startTime'])
+            end_dt = self.parse_timestamp(entry['endTime'])
+            if start_dt and end_dt:
+                duration = (end_dt - start_dt).total_seconds()
+                if duration < settings.get('duration_threshold', 600):
+                    return None
+            
+            # Check probability threshold
+            probability = float(visit.get('probability', 0.0))
+            if probability < settings.get('probability_threshold', 0.1):
+                return None
+            
+            # Preserve all original visit fields
+            top_candidate = visit.get('topCandidate', {})
+            result = {
+                'startTime': entry['startTime'],
+                'endTime': entry['endTime'],
+                'visit': {
+                    'topCandidate': {
+                        'placeLocation': f"geo:{coords[0]:.6f},{coords[1]:.6f}",
+                        'probability': str(top_candidate.get('probability', probability))
+                    },
+                    'probability': str(probability)
+                }
+            }
+            
+            # Add optional fields if they exist
+            if 'placeID' in top_candidate:
+                result['visit']['topCandidate']['placeID'] = top_candidate['placeID']
+            if 'semanticType' in top_candidate:
+                result['visit']['topCandidate']['semanticType'] = top_candidate['semanticType']
+            
+            self.stats['visits'] += 1
+            return result
+        except:
+            return None
+    
+    def process_timeline_path(self, entry: dict, settings: dict):
+        """Process timeline path entry with guaranteed first point and better local movement handling."""
+        try:
+            timeline_path = entry.get('timelinePath', [])
+            if not timeline_path:
+                return None
+            
+            distance_threshold = settings.get('distance_threshold', 200)
+            
+            # ALWAYS keep the first point - this solves the "missing start of day" issue
+            filtered_points = []
+            
+            for i, point in enumerate(timeline_path):
+                coords = self.parse_coordinates(point.get('point'))
+                if not coords:
+                    continue
+                
+                # Always add the first valid point
+                if i == 0:
+                    filtered_points.append({
+                        'point': f"geo:{coords[0]:.6f},{coords[1]:.6f}",
+                        'durationMinutesOffsetFromStartTime': point.get('durationMinutesOffsetFromStartTime', '0'),
+                        'mode': point.get('mode', 'unknown')
+                    })
+                    continue
+                
+                # For subsequent points, apply distance filtering
+                if filtered_points:  # We have at least one point
+                    last_point_coords = None
+                    last_point_str = filtered_points[-1]['point']
+                    if last_point_str.startswith('geo:'):
+                        coord_parts = last_point_str.replace('geo:', '').split(',')
+                        if len(coord_parts) == 2:
+                            last_point_coords = (float(coord_parts[0]), float(coord_parts[1]))
+                    
+                    if last_point_coords:
+                        distance = self.calculate_distance(last_point_coords, coords)
+                        if distance < distance_threshold:
+                            continue  # Skip points too close together
+                
+                filtered_points.append({
+                    'point': f"geo:{coords[0]:.6f},{coords[1]:.6f}",
+                    'durationMinutesOffsetFromStartTime': point.get('durationMinutesOffsetFromStartTime', '0'),
+                    'mode': point.get('mode', 'unknown')
+                })
+            
+            # If we only have 1 point (local movement), that's fine - return it
+            if len(filtered_points) == 1:
+                self.stats['timeline_paths'] += 1
+                return {
+                    'startTime': entry['startTime'],
+                    'endTime': entry['endTime'],
+                    'timelinePath': filtered_points
+                }
+            
+            # Apply intelligent sampling based on movement type and settings
+            original_length = len(timeline_path)
+            filtered_length = len(filtered_points)
+            
+            # Determine if this is local movement or travel
+            if original_length <= 10 or filtered_length <= 5:
+                # Local movement - keep more granular data
+                max_points = min(8, filtered_length)
+            else:
+                # Travel movement - sample more aggressively based on threshold
+                if distance_threshold >= 2000:
+                    max_points = 5
+                elif distance_threshold >= 1000:
+                    max_points = 8
+                elif distance_threshold >= 500:
+                    max_points = 12
+                elif distance_threshold >= 200:
+                    max_points = 15
+                else:
+                    max_points = 20
+            
+            # Sample points if we have too many
+            if len(filtered_points) > max_points:
+                filtered_points = self.sample_points(filtered_points, max_points)
+            
+            self.stats['timeline_paths'] += 1
+            return {
+                'startTime': entry['startTime'],
+                'endTime': entry['endTime'],
+                'timelinePath': filtered_points
+            }
+            
+        except Exception as e:
+            return None
+    
+    def process_legacy_location(self, entry: dict, settings: dict):
+        """Process legacy location entry."""
+        try:
+            coords = self.parse_coordinates(entry)
+            if not coords:
+                return None
+            
+            timestamp = self.parse_timestamp(entry.get('timestampMs'))
+            if not timestamp:
+                return None
+            
+            self.stats['visits'] += 1
+            return {
+                'startTime': timestamp.isoformat(),
+                'endTime': timestamp.isoformat(),
+                'visit': {
+                    'topCandidate': {
+                        'placeLocation': f"geo:{coords[0]:.6f},{coords[1]:.6f}",
+                        'probability': str(entry.get('accuracy', 50) / 100.0)
+                    },
+                    'probability': str(entry.get('accuracy', 50) / 100.0)
+                }
+            }
+        except:
+            return None
+
     def process_file(self, input_file: str, settings: dict):
         """Main processing function with improved timeline handling."""
         try:
@@ -244,33 +485,49 @@ class LocationProcessor:
             if not relevant_entries:
                 return {'error': 'No entries found in date range'}
             
-            # For simplified processing, just return the filtered entries
-            # The real processing logic from your parser would go here
+            # Process entries with actual filtering
             self.progress("Processing entries...", 60)
             
             processed_entries = []
-            for i, entry in enumerate(relevant_entries):
-                # Simplified processing - in real version would call process_entry
-                processed_entries.append(entry)
+            batch_size = 5000
+            
+            for i in range(0, len(relevant_entries), batch_size):
+                batch = relevant_entries[i:i + batch_size]
                 
-                if i % 1000 == 0:
-                    progress_pct = 60 + (i / len(relevant_entries)) * 30
-                    self.progress(f"Processing: {i:,}/{len(relevant_entries):,} entries", progress_pct)
+                for entry in batch:
+                    processed = self.process_entry(entry, settings)
+                    if processed:
+                        processed_entries.append(processed)
+                
+                # Progress update
+                progress_pct = 60 + (i / len(relevant_entries)) * 30
+                if i % 25000 == 0:
+                    self.progress(f"Processing: {len(processed_entries):,} entries kept from {i:,} examined", progress_pct)
             
             self.stats['final_count'] = len(processed_entries)
             
             # Sort by time
             self.progress("Finalizing output...", 95)
+            processed_entries.sort(key=lambda x: x['startTime'])
+            
+            # Calculate results
+            original_count = len(relevant_entries)
+            final_count = len(processed_entries)
+            reduction_ratio = (1 - final_count / original_count) * 100 if original_count > 0 else 0
             
             self.log("=== PROCESSING COMPLETE ===")
             self.log(f"Total entries loaded: {self.stats['total_entries']:,}")
             self.log(f"Date range matches: {self.stats['date_filtered']:,}")
-            self.log(f"Final output: {len(processed_entries):,} entries")
+            self.log(f"Activities processed: {self.stats['activities']:,}")
+            self.log(f"Visits processed: {self.stats['visits']:,}")
+            self.log(f"Timeline paths processed: {self.stats['timeline_paths']:,}")
+            self.log(f"Final output: {final_count:,} entries ({reduction_ratio:.1f}% reduction)")
             
             return {
                 'success': True,
                 'data': processed_entries,
-                'stats': self.stats
+                'stats': self.stats,
+                'reduction_percentage': round(reduction_ratio, 1)
             }
             
         except Exception as e:
