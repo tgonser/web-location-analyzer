@@ -11,6 +11,8 @@ import io
 import pandas as pd
 import multiprocessing
 import logging
+from typing import Dict
+
 
 # Import the existing modules - these need to be copied from your LAweb app
 try:
@@ -180,27 +182,53 @@ class LocationProcessor:
             return None
 
     def fast_date_filter(self, entries, from_dt, to_dt):
-        """Filter entries by date range - this is the key optimization."""
+        """Filter entries by date range - fast version based on working test."""
         self.progress(f"Date filtering {len(entries):,} entries...", 20)
         
         relevant_entries = []
-        batch_size = 10000
         
-        for i in range(0, len(entries), batch_size):
-            batch = entries[i:i + batch_size]
+        # Year pre-filtering for speed
+        start_year = from_dt.year
+        end_year = to_dt.year
+        
+        entries_checked = 0
+        
+        for entry in entries:
+            entries_checked += 1
             
-            for entry in batch:
+            # Get timestamp string for year check
+            timestamp_str = None
+            
+            if 'startTime' in entry:
+                timestamp_str = entry['startTime']
+            elif 'activity' in entry and isinstance(entry['activity'], dict) and 'startTime' in entry['activity']:
+                timestamp_str = entry['activity']['startTime']
+            elif 'visit' in entry and isinstance(entry['visit'], dict) and 'startTime' in entry['visit']:
+                timestamp_str = entry['visit']['startTime']
+            
+            if timestamp_str:
+                # Quick year check first
+                if len(timestamp_str) >= 4:
+                    try:
+                        year = int(timestamp_str[:4])
+                        if year < start_year or year > end_year:
+                            continue  # Skip entries outside year range
+                    except:
+                        pass
+                
+                # Full timestamp check for entries in the right year
                 timestamp = self.extract_timestamp_fast(entry)
                 if timestamp and from_dt <= timestamp < to_dt:
                     relevant_entries.append(entry)
             
-            # Progress update
-            progress_pct = 20 + (i / len(entries)) * 30  # 20% to 50%
-            if i % 50000 == 0:
-                self.progress(f"Date filtering: {len(relevant_entries):,} found so far", progress_pct)
+            # Progress updates
+            if entries_checked % 10000 == 0:
+                progress_pct = 20 + (entries_checked / len(entries)) * 30
+                self.progress(f"Date filtering: {len(relevant_entries):,} found from {entries_checked:,} checked", progress_pct)
         
         self.stats['date_filtered'] = len(relevant_entries)
-        self.log(f"Date filtering complete: {len(relevant_entries):,} entries in range")
+        self.log(f"Date filtering complete: {len(relevant_entries):,} entries in date range")
+        
         return relevant_entries
 
     def sample_points(self, points: list, max_points: int) -> list:
@@ -444,17 +472,17 @@ class LocationProcessor:
         except:
             return None
 
-    def process_file(self, input_file: str, settings: dict):
-        """Main processing function with improved timeline handling."""
+    def process_file(self, input_file: str, settings: dict) -> dict:
+        """Main processing function that applies BOTH date filtering AND thresholds."""
         try:
-            # Load file
+            # STEP 1: Load file
             file_size_mb = os.path.getsize(input_file) / (1024 * 1024)
             self.progress(f"Loading {file_size_mb:.1f}MB file...", 5)
             
             with open(input_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            # Extract entries
+            # STEP 2: Extract entries
             self.progress("Extracting entries...", 10)
             if isinstance(data, dict):
                 if 'timelineObjects' in data:
@@ -471,57 +499,74 @@ class LocationProcessor:
             self.stats['total_entries'] = len(entries)
             self.log(f"Loaded {len(entries):,} total entries")
             
-            # Free original data early
+            # Free original data
             del data
             
-            # Date filtering (key optimization)
+            # STEP 3: Parse date range (CRITICAL - add 1 day to end date for inclusive range)
             from_dt = pd.to_datetime(settings['from_date'], utc=True)
             to_dt = pd.to_datetime(settings['to_date'], utc=True) + pd.Timedelta(days=1)
             
-            self.log(f"Date filtering from {from_dt.date()} to {to_dt.date()}")
+            # Log what we're doing
+            self.log("=" * 50)
+            self.log(f"Processing parameters:")
+            self.log(f"  Date range: {from_dt.date()} to {to_dt.date() - pd.Timedelta(days=1)}")
+            self.log(f"  Distance threshold: {settings.get('distance_threshold', 200)}m")
+            self.log(f"  Probability threshold: {settings.get('probability_threshold', 0.1)}")
+            self.log(f"  Duration threshold: {settings.get('duration_threshold', 600)}s")
+            self.log("=" * 50)
+            
+            # STEP 4: Filter by date range FIRST (fast)
             relevant_entries = self.fast_date_filter(entries, from_dt, to_dt)
             del entries  # Free memory
             
             if not relevant_entries:
-                return {'error': 'No entries found in date range'}
+                self.log(f"No entries found between {from_dt.date()} and {to_dt.date() - pd.Timedelta(days=1)}")
+                return {'error': f'No entries found in date range {settings["from_date"]} to {settings["to_date"]}'}
             
-            # Process entries with actual filtering
-            self.progress("Processing entries...", 60)
-            
+            # STEP 5: Apply threshold filters to date-filtered entries
+            self.progress("Applying distance/duration/probability filters...", 60)
             processed_entries = []
-            batch_size = 5000
             
+            batch_size = 5000
             for i in range(0, len(relevant_entries), batch_size):
                 batch = relevant_entries[i:i + batch_size]
                 
                 for entry in batch:
+                    # This applies the threshold filters!
                     processed = self.process_entry(entry, settings)
-                    if processed:
+                    if processed:  # Only add if it passes ALL filters
                         processed_entries.append(processed)
                 
                 # Progress update
-                progress_pct = 60 + (i / len(relevant_entries)) * 30
-                if i % 25000 == 0:
-                    self.progress(f"Processing: {len(processed_entries):,} entries kept from {i:,} examined", progress_pct)
+                if i % 10000 == 0:
+                    progress_pct = 60 + (i / len(relevant_entries)) * 30
+                    self.progress(f"Filtering: {len(processed_entries):,} kept from {i:,} examined", progress_pct)
             
-            self.stats['final_count'] = len(processed_entries)
-            
-            # Sort by time
+            # STEP 6: Sort by time
             self.progress("Finalizing output...", 95)
             processed_entries.sort(key=lambda x: x['startTime'])
             
-            # Calculate results
-            original_count = len(relevant_entries)
-            final_count = len(processed_entries)
-            reduction_ratio = (1 - final_count / original_count) * 100 if original_count > 0 else 0
+            self.stats['final_count'] = len(processed_entries)
             
-            self.log("=== PROCESSING COMPLETE ===")
-            self.log(f"Total entries loaded: {self.stats['total_entries']:,}")
-            self.log(f"Date range matches: {self.stats['date_filtered']:,}")
-            self.log(f"Activities processed: {self.stats['activities']:,}")
-            self.log(f"Visits processed: {self.stats['visits']:,}")
-            self.log(f"Timeline paths processed: {self.stats['timeline_paths']:,}")
-            self.log(f"Final output: {final_count:,} entries ({reduction_ratio:.1f}% reduction)")
+            # STEP 7: Calculate and log results
+            reduction_ratio = (1 - len(processed_entries) / len(relevant_entries)) * 100 if relevant_entries else 0
+            
+            self.log("=" * 50)
+            self.log("PROCESSING COMPLETE:")
+            self.log(f"  Total entries in file: {self.stats['total_entries']:,}")
+            self.log(f"  Entries in date range: {self.stats['date_filtered']:,}")
+            self.log(f"  After applying filters: {self.stats['final_count']:,}")
+            self.log(f"  Reduction: {reduction_ratio:.1f}%")
+            self.log(f"  Activities: {self.stats.get('activities', 0):,}")
+            self.log(f"  Visits: {self.stats.get('visits', 0):,}")
+            self.log(f"  Timeline paths: {self.stats.get('timeline_paths', 0):,}")
+            self.log("=" * 50)
+            
+            # Verify output date range
+            if processed_entries:
+                first_time = self.parse_timestamp(processed_entries[0]['startTime'])
+                last_time = self.parse_timestamp(processed_entries[-1]['startTime'])
+                self.log(f"Output date range: {first_time.date()} to {last_time.date()}")
             
             return {
                 'success': True,
@@ -532,6 +577,8 @@ class LocationProcessor:
             
         except Exception as e:
             self.log(f"Processing failed: {str(e)}", "ERROR")
+            import traceback
+            self.log(traceback.format_exc(), "ERROR")
             return {'error': str(e)}
 
 def load_config():
