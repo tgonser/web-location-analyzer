@@ -32,7 +32,6 @@ uploads/
 processed/
 outputs/
 config/
-static/
 
 *.json
 !package.json
@@ -46,7 +45,7 @@ location_processor.log
 settings.json
 config/unified_config.json
 config/web_config.json
-config/geo_cache.json
+
 
 # IDE
 .vscode/
