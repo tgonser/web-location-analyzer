@@ -707,7 +707,30 @@ def index():
                          today=date.today().strftime('%Y-%m-%d'),
                          config=config,
                          cache_stats=cache_stats)
-
+@app.route('/process_subset', methods=['POST'])
+def process_subset():
+    """Process a pre-filtered subset from storage"""
+    try:
+        data = request.json
+        subset_data = data.get('data')
+        settings = data.get('settings')
+        metadata = data.get('metadata')
+        
+        # Store in session for next steps (geocoding, etc.)
+        session['filtered_data'] = subset_data
+        session['filter_settings'] = settings
+        session['data_metadata'] = metadata
+        
+        # Return success with any additional processing needed
+        return jsonify({
+            'success': True,
+            'data': subset_data,
+            'metadata': metadata,
+            'ready_for_geocoding': True
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+    
 @app.route('/upload_raw', methods=['POST'])
 def upload_raw():
     """Handle raw Google location history JSON upload for parsing"""

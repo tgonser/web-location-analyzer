@@ -1,0 +1,7 @@
+400 - 2000 - every .25 of a mile or every hour.  2.35 mb file good resolution. - 12,785 location points
+
+1200-600 - 6383 location points
+
+4000 - 300 - every 2.5M or every 5 min - 1.4mb file -lose lots of resolution for walking. 5,454 location points
+
+basically full - 29,489 points - 242 days

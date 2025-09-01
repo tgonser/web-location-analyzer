@@ -1,0 +1,189 @@
+Date,From,To,Mode,Distance (mi)
+2025-01-06 17:32,"Hailey, United States","King, United States",Flight,443.63
+2025-01-06 17:34,"King, United States","Hailey, United States",Flight,443.2
+2025-01-06 17:43,"Blaine County, United States","Camas County, United States",Car,22.47
+2025-01-06 17:45,"Camas County, United States","Camas, United States",Car,11.19
+2025-01-06 17:48,"Camas, United States","Elmore, United States",Car,17.2
+2025-01-06 17:54,"Elmore, United States","Boise, United States",Car,28.23
+2025-01-06 18:15,"Boise, United States","Union, United States",Flight,144.47
+2025-01-06 18:33,"Union, United States","Sunnyside, United States",Flight,121.69
+2025-01-06 18:40,"Sunnyside, United States","Yakima, United States",Car,43.69
+2025-01-06 18:50,"Yakima, United States","King County, United States",Car,59.98
+2025-01-06 21:06,"Kent, United States","Mercer Island, United States",Car,17.08
+2025-01-10 04:20,"SeaTac, United States","Kihei, United States",Flight,2653.92
+2025-01-14 20:58,"Kihei, United States","Kahului, United States",Car,12.04
+2025-01-14 20:59,"Kahului, United States","Kihei, United States",Car,12.06
+2025-01-25 03:35,"Kahului, United States","Kihei, United States",Car,14.75
+2025-01-25 23:30,"Paia, United States","Kihei, United States",Car,11.94
+2025-01-25 23:33,"Kihei, United States","Paia, United States",Car,10.94
+2025-02-16 18:27,"Maalaea, United States","Lahaina, United States",Car,11.33
+2025-02-24 20:25,"Kihei, United States","Kahului, United States",Car,12.03
+2025-02-24 20:26,"Kahului, United States","Kihei, United States",Car,11.7
+2025-03-13 01:01,"Maui County, United States","Kalaoa, United States",Car,83.71
+2025-03-15 00:03,"Kailua, United States","Wailuku, United States",Car,83.96
+2025-03-21 03:11,"Kahului, United States","SeaTac, United States",Flight,2639.87
+2025-03-21 16:58,"Mercer Island, United States","Fort Lewis, United States",Car,41.06
+2025-03-21 16:59,"Fort Lewis, United States","Mercer Island, United States",Car,41.35
+2025-03-21 19:05,"Lacey, United States","Seattle, United States",Car,39.86
+2025-03-21 19:16,"Seattle, United States","Dupont, United States",Car,36.52
+2025-03-22 16:26,"Tukwila, United States","Lewis County, United States",Car,67.96
+2025-03-22 16:29,"Lewis County, United States","Yakima, United States",Car,26.16
+2025-03-22 23:45,"Yakima, United States","Sun Valley, United States",Flight,377.57
+2025-03-29 16:05,"Hailey, United States","Seattle, United States",Flight,482.11
+2025-04-03 23:22,"Seatac, United States","Kahului, United States",Flight,2646.4
+2025-04-15 18:58,"Kihei, United States","Kahului, United States",Car,13.07
+2025-04-15 18:59,"Kahului, United States","Kihei, United States",Car,12.99
+2025-04-25 19:16,"Wailea, United States","Kaupakalua, United States",Car,19.53
+2025-04-25 19:17,"Kaupakalua, United States","Kihei, United States",Car,17.99
+2025-04-30 00:13,"Lahaina, United States","Kihei, United States",Car,16.72
+2025-04-30 00:17,"Kihei, United States","Lahaina, United States",Car,16.2
+2025-05-12 01:00,"Maui County, United States","None, None",Flight,566.89
+2025-05-12 05:27,"None, None","SeaTac, United States",Flight,1294.78
+2025-05-13 20:41,"SeaTac, United States","Las Veredas, Mexico",Flight,1816.55
+2025-05-18 21:50,"Los Cabos Municipality, Mexico","Las Veredas, Mexico",Car,12.57
+2025-05-19 02:50,"Las Veredas, Mexico","SeaTac, United States",Flight,1817.12
+2025-05-28 15:01,"Seattle, United States","San Juan, United States",Car,75.38
+2025-05-28 15:13,"San Juan, United States","Seattle, United States",Car,73.27
+2025-06-01 17:48,"Roche Harbor, United States","Kitsap, United States",Car,58.23
+2025-06-01 17:54,"Kitsap, United States","San Juan County, United States",Car,59.07
+2025-06-07 10:07,"SeaTac, United States","Schiphol, Netherlands",Flight,4871.78
+2025-06-07 15:21,"Schiphol, Netherlands","Fiumicino, Italy",Flight,806.38
+2025-06-07 15:58,"Fiumicino, Italy","Bracciano, Italy",Car,16.59
+2025-06-07 15:59,"Bracciano, Italy","Fiumicino, Italy",Car,14.67
+2025-06-08 07:11,"Canale Monterano, Italy","Attigliano, Italy",Car,30.14
+2025-06-08 07:17,"Attigliano, Italy","Canale Monterano, Italy",Car,28.55
+2025-06-08 08:58,"Civitella D'Agliano, Italy","Colle Di Val D'Elsa, Italy",Car,77.11
+2025-06-08 09:00,"Colle Di Val D'Elsa, Italy","Castiglione In Teverina, Italy",Car,76.35
+2025-06-11 08:21,"Tavarnelle Val Di Pesa, Italy","Florence, Italy",Car,11.71
+2025-06-11 08:25,"Florence, Italy","Tavarnelle Val Di Pesa, Italy",Car,11.1
+2025-06-11 17:29,"Florence, Italy","Tavarnelle Val Di Pesa, Italy",Car,13.97
+2025-06-13 09:12,"Tavarnelle Val Di Pesa, Italy","Castelnuovo Berardenga, Italy",Car,22.87
+2025-06-13 09:18,"Castelnuovo Berardenga, Italy","Barberino Val D'Elsa, Italy",Car,21.2
+2025-06-14 06:13,"Montepulciano, Italy","Civitella D'Agliano, Italy",Car,37.15
+2025-06-14 06:18,"Civitella D'Agliano, Italy","Montepulciano, Italy",Car,36.35
+2025-06-14 07:27,"Giove, Italy","Rome, Italy",Car,47.66
+2025-06-14 07:32,"Rome, Italy","Caldare, Italy",Car,44.07
+2025-06-14 09:50,"Fiumicino, Italy","Graffignano, Italy",Car,52.15
+2025-06-14 09:57,"Graffignano, Italy","Rome, Italy",Car,51.04
+2025-06-14 11:11,"Graffignano, Italy","Chiusi, Italy",Car,36.24
+2025-06-14 11:13,"Chiusi, Italy","Orvieto, Italy",Car,29.78
+2025-06-14 12:12,"Montepulciano, Italy","Allerona, Italy",Car,19.38
+2025-06-14 12:15,"Allerona, Italy","Montepulciano, Italy",Car,19.43
+2025-06-14 13:45,"Orvieto, Italy","Rome, Italy",Car,54.12
+2025-06-14 13:51,"Rome, Italy","Orvieto Scalo, Italy",Car,53.69
+2025-06-14 15:45,"Fiumicino, Italy","Rome, Italy",Car,12.57
+2025-06-14 15:47,"Rome, Italy","Fiumicino, Italy",Car,12.41
+2025-06-17 09:15,"Rome, Italy","Gricignano di Aversa, Italy",Flight,108.45
+2025-06-17 09:20,"Gricignano di Aversa, Italy","Rome, Italy",Flight,106.2
+2025-06-17 09:36,"Rome, Italy","Segni, Italy",Car,28.13
+2025-06-17 11:00,"Mignano Monte Lungo, Italy","Capua, Italy",Car,24.63
+2025-06-17 12:07,"Naples, Italy","Massa Lubrense, Italy",Car,19.09
+2025-06-17 12:11,"Massa Lubrense, Italy","Naples, Italy",Car,18.45
+2025-06-18 15:07,"Sorrento, Italy","None, None",Car,14.49
+2025-06-18 15:15,"None, None","None, Italy",Car,10.18
+2025-06-18 17:49,"Caivano, Italy","Rome, Italy",Flight,115.23
+2025-06-20 13:09,"Fiumicino, Italy","Slatine, Croatia",Flight,238.54
+2025-06-21 11:09,"Split, Croatia","None, Croatia",Car,12.56
+2025-06-21 11:13,"None, Croatia","Split, Croatia",Car,11.94
+2025-06-22 07:18,"None, Croatia","Grad Vis, Croatia",Car,22.22
+2025-06-25 08:03,"None, Croatia","Curzola, Croatia",Car,23.85
+2025-06-26 07:18,"Curzola, Croatia","Dubrovnik-Neretva County, Croatia",Car,13.44
+2025-06-26 07:30,"Dubrovnik-Neretva County, Croatia","Općina Orebić, Croatia",Car,13.24
+2025-06-27 07:46,"Polače, Croatia","Dubrovnik-Neretva County, Croatia",Car,16.32
+2025-06-28 10:17,"Dubrovnik, Croatia","None, Croatia",Car,25.98
+2025-06-28 10:18,"None, Croatia","Dubrovnik, Croatia",Car,25.13
+2025-06-28 17:18,"None, None","Martina Franca, Italy",Flight,136.44
+2025-07-01 09:31,"Cellino San Marco, Italy","Carovigno, Italy",Car,22.18
+2025-07-01 09:32,"Carovigno, Italy","Cellino San Marco, Italy",Car,21.28
+2025-07-02 07:00,"Massafra, Italy","Trebisacce, Italy",Car,58.18
+2025-07-02 07:06,"Trebisacce, Italy","Massafra, Italy",Car,54.58
+2025-07-02 08:55,"Villapiana, Italy","San Lorenzo Del Vallo, Italy",Car,14.8
+2025-07-02 08:59,"San Lorenzo Del Vallo, Italy","Villapiana Lido, Italy",Car,15.14
+2025-07-02 09:41,"Tarsia, Italy","Rende, Italy",Car,15.6
+2025-07-02 10:22,"Cosenza, Italy","Nocera Scalo, Italy",Car,21.15
+2025-07-02 10:23,"Nocera Scalo, Italy","Cosenza, Italy",Car,21.12
+2025-07-02 13:18,"Pizzo, Italy","Parghelia, Italy",Car,15.58
+2025-07-02 13:21,"Parghelia, Italy","Pizzo, Italy",Car,14.63
+2025-07-04 06:54,"Ricadi, Italy","Bagnara Calabra, Italy",Car,25.41
+2025-07-04 06:59,"Bagnara Calabra, Italy","Ricadi, Italy",Car,25.39
+2025-07-07 09:33,"Taormina, Italy","Scillato, Italy",Car,77.64
+2025-07-07 09:34,"Scillato, Italy","Taormina, Italy",Car,78.02
+2025-07-07 11:40,"Taormina, Italy","Polizzi Generosa, Italy",Car,71.48
+2025-07-08 07:42,"Santa Flavia, Italy","Campofelice Di Roccella, Italy",Car,19.32
+2025-07-08 07:49,"Campofelice Di Roccella, Italy","Bagheria, Italy",Car,20.73
+2025-07-08 14:14,"Cefalù, Italy","Casteldaccia, Italy",Car,25.37
+2025-07-08 14:16,"Casteldaccia, Italy","Cefalù, Italy",Car,24.29
+2025-07-10 08:09,"Santa Flavia, Italy","Bolognetta, Italy",Car,10.32
+2025-07-10 09:05,"Cefalà Diana, Italy","Aragona, Italy",Car,37.16
+2025-07-10 09:15,"Aragona, Italy","Mezzojuso, Italy",Car,35.04
+2025-07-10 13:50,"Province of Agrigento, Italy","Altavilla Milicia, Italy",Car,50.53
+2025-07-10 13:55,"Altavilla Milicia, Italy","Province of Agrigento, Italy",Car,49.56
+2025-07-13 11:03,"Palermo, Italy","Gioiosa Marea, Italy",Car,82.8
+2025-07-13 14:12,"Patti, Italy","Taormina, Italy",Car,25.61
+2025-07-13 22:57,"Riposto, Italy","Messina, Italy",Car,37.41
+2025-07-14 07:38,"Messina, Italy","Capo d'Orlando, Italy",Car,44.42
+2025-07-14 09:20,"Capo d'Orlando, Italy","Messina, Italy",Car,44.53
+2025-07-14 10:10,"None, None","Curinga, Italy",Car,55.61
+2025-07-14 12:11,"Curinga, Italy","Gioia Tauro, Italy",Car,35.54
+2025-07-14 12:45,"Gioia Tauro, Italy","Francavilla Angitola, Italy",Car,29.85
+2025-07-14 13:45,"Nocera Scalo, Italy","Longobardi, Italy",Car,13.55
+2025-07-14 14:51,"Longobardi, Italy","Maratea, Italy",Car,57.36
+2025-07-14 20:56,"Maratea, Italy","Cirella, Italy",Car,19.54
+2025-07-15 08:10,"Diamante, Italy","Aprilia, Italy",Flight,214.68
+2025-07-15 08:36,"Aprilia, Italy","Rome, Italy",Car,12.06
+2025-07-16 22:50,"Fiumicino, Italy","SeaTac, United States",Flight,5673.41
+2025-07-21 16:01,"Seattle, United States","Hailey, United States",Flight,471.65
+2025-07-21 17:04,"Hailey, United States","Fairfield, United States",Car,24.57
+2025-07-21 17:06,"Fairfield, United States","Camas County, United States",Car,12.13
+2025-07-21 17:19,"Camas County, United States","Hailey, United States",Car,18.35
+2025-07-23 21:12,"Hailey, United States","Mercer Island, United States",Flight,476.52
+2025-08-07 17:16,"Seattle, United States","Hood River County, United States",Flight,154.51
+2025-08-07 17:32,"Hood River County, United States","Bend, United States",Car,87.98
+2025-08-08 18:39,"Bend, United States","Sisters, United States",Car,12.35
+2025-08-08 18:41,"Sisters, United States","Bend, United States",Car,12.27
+2025-08-09 00:03,"Sisters, United States","Bend, United States",Car,19.63
+2025-08-09 00:07,"Bend, United States","Sisters, United States",Car,18.07
+2025-08-09 14:55,"Bend, United States","Hines, United States",Flight,108.95
+2025-08-09 14:56,"Hines, United States","Bend, United States",Flight,108.84
+2025-08-09 15:42,"Millican, United States","Deschutes County, United States",Car,10.57
+2025-08-09 16:07,"Deschutes County, United States","Lake County, United States",Car,10.64
+2025-08-09 16:49,"Harney County, United States","Hines, United States",Car,11.24
+2025-08-09 17:46,"Hines, United States","Ontario, United States",Flight,105.64
+2025-08-09 17:51,"Ontario, United States","Burns, United States",Flight,104.24
+2025-08-09 20:24,"Ontario, United States","Elmore County, United States",Car,75.13
+2025-08-09 20:26,"Elmore County, United States","Ontario, United States",Car,75.34
+2025-08-09 22:24,"Mountain Home, United States","Hailey, United States",Car,76.16
+2025-08-09 22:30,"Hailey, United States","Mountain Home, United States",Car,73.1
+2025-08-11 20:44,"Ketchum, United States","Bellevue, United States",Car,15.34
+2025-08-11 20:45,"Bellevue, United States","Ketchum, United States",Car,15.07
+2025-08-11 21:39,"Bellevue, United States","Ketchum, United States",Car,14.71
+2025-08-11 21:42,"Ketchum, United States","Bellevue, United States",Car,14.0
+2025-08-13 15:26,"Hailey, United States","Fairfield, United States",Car,17.38
+2025-08-13 15:30,"Fairfield, United States","Hailey, United States",Car,17.6
+2025-08-13 15:33,"Hailey, United States","Blaine County, United States",Car,13.41
+2025-08-13 15:50,"Fairfield, United States","Gem County, United States",Flight,103.85
+2025-08-13 16:18,"Gem County, United States","Sunnyside, United States",Flight,233.12
+2025-08-13 16:20,"Sunnyside, United States","Wapato, United States",Car,17.44
+2025-08-13 16:24,"Moxee City, United States","Naches, United States",Car,28.22
+2025-08-13 16:29,"Yakima County, United States","Yakima, United States",Car,22.06
+2025-08-13 16:35,"Yakima, United States","Black Diamond, United States",Car,40.22
+2025-08-13 16:52,"Black Diamond, United States","Seattle, United States",Car,18.74
+2025-08-20 16:18,"Seattle, United States","Graham, United States",Car,36.51
+2025-08-20 19:43,"Graham, United States","Bend, United States",Flight,210.86
+2025-08-21 17:52,"Bend, United States","Hines, United States",Flight,108.49
+2025-08-21 17:56,"Hines, United States","Bend, United States",Flight,108.29
+2025-08-21 22:02,"Juntura, United States","Cairo, United States",Car,56.32
+2025-08-21 22:52,"Cairo, United States","Vale, United States",Car,20.32
+2025-08-21 23:47,"Ontario, United States","Boise, United States",Car,44.16
+2025-08-21 23:50,"Boise, United States","Fruitland, United States",Car,39.41
+2025-08-22 15:52,"Garden City, United States","Elmore County, United States",Car,34.91
+2025-08-22 15:58,"Elmore County, United States","Boise, United States",Car,35.31
+2025-08-22 16:53,"Mountain Home, United States","Ketchum, United States",Car,74.25
+2025-08-22 16:56,"Ketchum, United States","Mountain Home, United States",Car,72.39
+2025-08-24 16:37,"Ketchum, United States","Hailey, United States",Car,11.48
+2025-08-24 16:40,"Hailey, United States","Ketchum, United States",Car,11.17
+2025-08-25 18:19,"Ketchum, United States","Stanley, United States",Car,34.05
+2025-08-25 18:20,"Stanley, United States","Ketchum, United States",Car,34.15
+2025-08-25 19:38,"Blaine County, United States","Stanley, United States",Car,12.28
+2025-08-26 16:11,"Stanley, United States","Blaine County, United States",Car,16.45
+2025-08-26 16:42,"Blaine County, United States","Ketchum, United States",Car,16.85

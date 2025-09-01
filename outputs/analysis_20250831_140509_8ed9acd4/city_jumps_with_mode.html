@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>City Jumps - Location Analysis Results</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            margin: 0;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2em;
+            font-weight: 300;
+        }
+        
+        .summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2196F3;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        table { 
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td { 
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th { 
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        tr.highlight {
+            background-color: #e3f2fd !important;
+        }
+        
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .sortable:hover {
+            background: #e9ecef;
+        }
+        
+        .sort-arrow {
+            margin-left: 8px;
+            opacity: 0.5;
+        }
+        
+        .actions {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #757575, #616161);
+        }
+        
+        @media (max-width: 768px) {
+            .summary { grid-template-columns: 1fr; }
+            th, td { padding: 10px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>City Jumps</h1>
+            <p>Generated on 2025-08-31 at 14:05:12</p>
+        </div>
+        
+        <div class="summary">
+            <div class="stat">
+                <div class="stat-number">188</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">34821</div>
+                <div class="stat-label">Total Miles</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <input type="text" id="searchBox" class="search-box" placeholder="Search table data..." onkeyup="filterTable()">
+            <div>
+                <strong>Click column headers to sort</strong> • 
+                <span id="recordCount">188</span> records shown
+            </div>
+        </div>
+        
+        <div class="table-container"><table border="1" class="dataframe data-table" id="dataTable">
+  <thead>
+    <tr style="text-align: right;">
+      <th class="sortable" onclick="sortTable(this)">Date</th>
+      <th class="sortable" onclick="sortTable(this)">From</th>
+      <th class="sortable" onclick="sortTable(this)">To</th>
+      <th class="sortable" onclick="sortTable(this)">Mode</th>
+      <th class="sortable" onclick="sortTable(this)">Distance (mi)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2025-01-06 17:32</td>
+      <td>Hailey, United States</td>
+      <td>King, United States</td>
+      <td>Flight</td>
+      <td>443.63</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 17:34</td>
+      <td>King, United States</td>
+      <td>Hailey, United States</td>
+      <td>Flight</td>
+      <td>443.20</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 17:43</td>
+      <td>Blaine County, United States</td>
+      <td>Camas County, United States</td>
+      <td>Car</td>
+      <td>22.47</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 17:45</td>
+      <td>Camas County, United States</td>
+      <td>Camas, United States</td>
+      <td>Car</td>
+      <td>11.19</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 17:48</td>
+      <td>Camas, United States</td>
+      <td>Elmore, United States</td>
+      <td>Car</td>
+      <td>17.20</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 17:54</td>
+      <td>Elmore, United States</td>
+      <td>Boise, United States</td>
+      <td>Car</td>
+      <td>28.23</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 18:15</td>
+      <td>Boise, United States</td>
+      <td>Union, United States</td>
+      <td>Flight</td>
+      <td>144.47</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 18:33</td>
+      <td>Union, United States</td>
+      <td>Sunnyside, United States</td>
+      <td>Flight</td>
+      <td>121.69</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 18:40</td>
+      <td>Sunnyside, United States</td>
+      <td>Yakima, United States</td>
+      <td>Car</td>
+      <td>43.69</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 18:50</td>
+      <td>Yakima, United States</td>
+      <td>King County, United States</td>
+      <td>Car</td>
+      <td>59.98</td>
+    </tr>
+    <tr>
+      <td>2025-01-06 21:06</td>
+      <td>Kent, United States</td>
+      <td>Mercer Island, United States</td>
+      <td>Car</td>
+      <td>17.08</td>
+    </tr>
+    <tr>
+      <td>2025-01-10 04:20</td>
+      <td>SeaTac, United States</td>
+      <td>Kihei, United States</td>
+      <td>Flight</td>
+      <td>2653.92</td>
+    </tr>
+    <tr>
+      <td>2025-01-14 20:58</td>
+      <td>Kihei, United States</td>
+      <td>Kahului, United States</td>
+      <td>Car</td>
+      <td>12.04</td>
+    </tr>
+    <tr>
+      <td>2025-01-14 20:59</td>
+      <td>Kahului, United States</td>
+      <td>Kihei, United States</td>
+      <td>Car</td>
+      <td>12.06</td>
+    </tr>
+    <tr>
+      <td>2025-01-25 03:35</td>
+      <td>Kahului, United States</td>
+      <td>Kihei, United States</td>
+      <td>Car</td>
+      <td>14.75</td>
+    </tr>
+    <tr>
+      <td>2025-01-25 23:30</td>
+      <td>Paia, United States</td>
+      <td>Kihei, United States</td>
+      <td>Car</td>
+      <td>11.94</td>
+    </tr>
+    <tr>
+      <td>2025-01-25 23:33</td>
+      <td>Kihei, United States</td>
+      <td>Paia, United States</td>
+      <td>Car</td>
+      <td>10.94</td>
+    </tr>
+    <tr>
+      <td>2025-02-16 18:27</td>
+      <td>Maalaea, United States</td>
+      <td>Lahaina, United States</td>
+      <td>Car</td>
+      <td>11.33</td>
+    </tr>
+    <tr>
+      <td>2025-02-24 20:25</td>
+      <td>Kihei, United States</td>
+      <td>Kahului, United States</td>
+      <td>Car</td>
+      <td>12.03</td>
+    </tr>
+    <tr>
+      <td>2025-02-24 20:26</td>
+      <td>Kahului, United States</td>
+      <td>Kihei, United States</td>
+      <td>Car</td>
+      <td>11.70</td>
+    </tr>
+    <tr>
+      <td>2025-03-13 01:01</td>
+      <td>Maui County, United States</td>
+      <td>Kalaoa, United States</td>
+      <td>Car</td>
+      <td>83.71</td>
+    </tr>
+    <tr>
+      <td>2025-03-15 00:03</td>
+      <td>Kailua, United States</td>
+      <td>Wailuku, United States</td>
+      <td>Car</td>
+      <td>83.96</td>
+    </tr>
+    <tr>
+      <td>2025-03-21 03:11</td>
+      <td>Kahului, United States</td>
+      <td>SeaTac, United States</td>
+      <td>Flight</td>
+      <td>2639.87</td>
+    </tr>
+    <tr>
+      <td>2025-03-21 16:58</td>
+      <td>Mercer Island, United States</td>
+      <td>Fort Lewis, United States</td>
+      <td>Car</td>
+      <td>41.06</td>
+    </tr>
+    <tr>
+      <td>2025-03-21 16:59</td>
+      <td>Fort Lewis, United States</td>
+      <td>Mercer Island, United States</td>
+      <td>Car</td>
+      <td>41.35</td>
+    </tr>
+    <tr>
+      <td>2025-03-21 19:05</td>
+      <td>Lacey, United States</td>
+      <td>Seattle, United States</td>
+      <td>Car</td>
+      <td>39.86</td>
+    </tr>
+    <tr>
+      <td>2025-03-21 19:16</td>
+      <td>Seattle, United States</td>
+      <td>Dupont, United States</td>
+      <td>Car</td>
+      <td>36.52</td>
+    </tr>
+    <tr>
+      <td>2025-03-22 16:26</td>
+      <td>Tukwila, United States</td>
+      <td>Lewis County, United States</td>
+      <td>Car</td>
+      <td>67.96</td>
+    </tr>
+    <tr>
+      <td>2025-03-22 16:29</td>
+      <td>Lewis County, United States</td>
+      <td>Yakima, United States</td>
+      <td>Car</td>
+      <td>26.16</td>
+    </tr>
+    <tr>
+      <td>2025-03-22 23:45</td>
+      <td>Yakima, United States</td>
+      <td>Sun Valley, United States</td>
+      <td>Flight</td>
+      <td>377.57</td>
+    </tr>
+    <tr>
+      <td>2025-03-29 16:05</td>
+      <td>Hailey, United States</td>
+      <td>Seattle, United States</td>
+      <td>Flight</td>
+      <td>482.11</td>
+    </tr>
+    <tr>
+      <td>2025-04-03 23:22</td>
+      <td>Seatac, United States</td>
+      <td>Kahului, United States</td>
+      <td>Flight</td>
+      <td>2646.40</td>
+    </tr>
+    <tr>
+      <td>2025-04-15 18:58</td>
+      <td>Kihei, United States</td>
+      <td>Kahului, United States</td>
+      <td>Car</td>
+      <td>13.07</td>
+    </tr>
+    <tr>
+      <td>2025-04-15 18:59</td>
+      <td>Kahului, United States</td>
+      <td>Kihei, United States</td>
+      <td>Car</td>
+      <td>12.99</td>
+    </tr>
+    <tr>
+      <td>2025-04-25 19:16</td>
+      <td>Wailea, United States</td>
+      <td>Kaupakalua, United States</td>
+      <td>Car</td>
+      <td>19.53</td>
+    </tr>
+    <tr>
+      <td>2025-04-25 19:17</td>
+      <td>Kaupakalua, United States</td>
+      <td>Kihei, United States</td>
+      <td>Car</td>
+      <td>17.99</td>
+    </tr>
+    <tr>
+      <td>2025-04-30 00:13</td>
+      <td>Lahaina, United States</td>
+      <td>Kihei, United States</td>
+      <td>Car</td>
+      <td>16.72</td>
+    </tr>
+    <tr>
+      <td>2025-04-30 00:17</td>
+      <td>Kihei, United States</td>
+      <td>Lahaina, United States</td>
+      <td>Car</td>
+      <td>16.20</td>
+    </tr>
+    <tr>
+      <td>2025-05-12 01:00</td>
+      <td>Maui County, United States</td>
+      <td>None, None</td>
+      <td>Flight</td>
+      <td>566.89</td>
+    </tr>
+    <tr>
+      <td>2025-05-12 05:27</td>
+      <td>None, None</td>
+      <td>SeaTac, United States</td>
+      <td>Flight</td>
+      <td>1294.78</td>
+    </tr>
+    <tr>
+      <td>2025-05-13 20:41</td>
+      <td>SeaTac, United States</td>
+      <td>Las Veredas, Mexico</td>
+      <td>Flight</td>
+      <td>1816.55</td>
+    </tr>
+    <tr>
+      <td>2025-05-18 21:50</td>
+      <td>Los Cabos Municipality, Mexico</td>
+      <td>Las Veredas, Mexico</td>
+      <td>Car</td>
+      <td>12.57</td>
+    </tr>
+    <tr>
+      <td>2025-05-19 02:50</td>
+      <td>Las Veredas, Mexico</td>
+      <td>SeaTac, United States</td>
+      <td>Flight</td>
+      <td>1817.12</td>
+    </tr>
+    <tr>
+      <td>2025-05-28 15:01</td>
+      <td>Seattle, United States</td>
+      <td>San Juan, United States</td>
+      <td>Car</td>
+      <td>75.38</td>
+    </tr>
+    <tr>
+      <td>2025-05-28 15:13</td>
+      <td>San Juan, United States</td>
+      <td>Seattle, United States</td>
+      <td>Car</td>
+      <td>73.27</td>
+    </tr>
+    <tr>
+      <td>2025-06-01 17:48</td>
+      <td>Roche Harbor, United States</td>
+      <td>Kitsap, United States</td>
+      <td>Car</td>
+      <td>58.23</td>
+    </tr>
+    <tr>
+      <td>2025-06-01 17:54</td>
+      <td>Kitsap, United States</td>
+      <td>San Juan County, United States</td>
+      <td>Car</td>
+      <td>59.07</td>
+    </tr>
+    <tr>
+      <td>2025-06-07 10:07</td>
+      <td>SeaTac, United States</td>
+      <td>Schiphol, Netherlands</td>
+      <td>Flight</td>
+      <td>4871.78</td>
+    </tr>
+    <tr>
+      <td>2025-06-07 15:21</td>
+      <td>Schiphol, Netherlands</td>
+      <td>Fiumicino, Italy</td>
+      <td>Flight</td>
+      <td>806.38</td>
+    </tr>
+    <tr>
+      <td>2025-06-07 15:58</td>
+      <td>Fiumicino, Italy</td>
+      <td>Bracciano, Italy</td>
+      <td>Car</td>
+      <td>16.59</td>
+    </tr>
+    <tr>
+      <td>2025-06-07 15:59</td>
+      <td>Bracciano, Italy</td>
+      <td>Fiumicino, Italy</td>
+      <td>Car</td>
+      <td>14.67</td>
+    </tr>
+    <tr>
+      <td>2025-06-08 07:11</td>
+      <td>Canale Monterano, Italy</td>
+      <td>Attigliano, Italy</td>
+      <td>Car</td>
+      <td>30.14</td>
+    </tr>
+    <tr>
+      <td>2025-06-08 07:17</td>
+      <td>Attigliano, Italy</td>
+      <td>Canale Monterano, Italy</td>
+      <td>Car</td>
+      <td>28.55</td>
+    </tr>
+    <tr>
+      <td>2025-06-08 08:58</td>
+      <td>Civitella D'Agliano, Italy</td>
+      <td>Colle Di Val D'Elsa, Italy</td>
+      <td>Car</td>
+      <td>77.11</td>
+    </tr>
+    <tr>
+      <td>2025-06-08 09:00</td>
+      <td>Colle Di Val D'Elsa, Italy</td>
+      <td>Castiglione In Teverina, Italy</td>
+      <td>Car</td>
+      <td>76.35</td>
+    </tr>
+    <tr>
+      <td>2025-06-11 08:21</td>
+      <td>Tavarnelle Val Di Pesa, Italy</td>
+      <td>Florence, Italy</td>
+      <td>Car</td>
+      <td>11.71</td>
+    </tr>
+    <tr>
+      <td>2025-06-11 08:25</td>
+      <td>Florence, Italy</td>
+      <td>Tavarnelle Val Di Pesa, Italy</td>
+      <td>Car</td>
+      <td>11.10</td>
+    </tr>
+    <tr>
+      <td>2025-06-11 17:29</td>
+      <td>Florence, Italy</td>
+      <td>Tavarnelle Val Di Pesa, Italy</td>
+      <td>Car</td>
+      <td>13.97</td>
+    </tr>
+    <tr>
+      <td>2025-06-13 09:12</td>
+      <td>Tavarnelle Val Di Pesa, Italy</td>
+      <td>Castelnuovo Berardenga, Italy</td>
+      <td>Car</td>
+      <td>22.87</td>
+    </tr>
+    <tr>
+      <td>2025-06-13 09:18</td>
+      <td>Castelnuovo Berardenga, Italy</td>
+      <td>Barberino Val D'Elsa, Italy</td>
+      <td>Car</td>
+      <td>21.20</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 06:13</td>
+      <td>Montepulciano, Italy</td>
+      <td>Civitella D'Agliano, Italy</td>
+      <td>Car</td>
+      <td>37.15</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 06:18</td>
+      <td>Civitella D'Agliano, Italy</td>
+      <td>Montepulciano, Italy</td>
+      <td>Car</td>
+      <td>36.35</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 07:27</td>
+      <td>Giove, Italy</td>
+      <td>Rome, Italy</td>
+      <td>Car</td>
+      <td>47.66</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 07:32</td>
+      <td>Rome, Italy</td>
+      <td>Caldare, Italy</td>
+      <td>Car</td>
+      <td>44.07</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 09:50</td>
+      <td>Fiumicino, Italy</td>
+      <td>Graffignano, Italy</td>
+      <td>Car</td>
+      <td>52.15</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 09:57</td>
+      <td>Graffignano, Italy</td>
+      <td>Rome, Italy</td>
+      <td>Car</td>
+      <td>51.04</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 11:11</td>
+      <td>Graffignano, Italy</td>
+      <td>Chiusi, Italy</td>
+      <td>Car</td>
+      <td>36.24</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 11:13</td>
+      <td>Chiusi, Italy</td>
+      <td>Orvieto, Italy</td>
+      <td>Car</td>
+      <td>29.78</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 12:12</td>
+      <td>Montepulciano, Italy</td>
+      <td>Allerona, Italy</td>
+      <td>Car</td>
+      <td>19.38</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 12:15</td>
+      <td>Allerona, Italy</td>
+      <td>Montepulciano, Italy</td>
+      <td>Car</td>
+      <td>19.43</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 13:45</td>
+      <td>Orvieto, Italy</td>
+      <td>Rome, Italy</td>
+      <td>Car</td>
+      <td>54.12</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 13:51</td>
+      <td>Rome, Italy</td>
+      <td>Orvieto Scalo, Italy</td>
+      <td>Car</td>
+      <td>53.69</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 15:45</td>
+      <td>Fiumicino, Italy</td>
+      <td>Rome, Italy</td>
+      <td>Car</td>
+      <td>12.57</td>
+    </tr>
+    <tr>
+      <td>2025-06-14 15:47</td>
+      <td>Rome, Italy</td>
+      <td>Fiumicino, Italy</td>
+      <td>Car</td>
+      <td>12.41</td>
+    </tr>
+    <tr>
+      <td>2025-06-17 09:15</td>
+      <td>Rome, Italy</td>
+      <td>Gricignano di Aversa, Italy</td>
+      <td>Flight</td>
+      <td>108.45</td>
+    </tr>
+    <tr>
+      <td>2025-06-17 09:20</td>
+      <td>Gricignano di Aversa, Italy</td>
+      <td>Rome, Italy</td>
+      <td>Flight</td>
+      <td>106.20</td>
+    </tr>
+    <tr>
+      <td>2025-06-17 09:36</td>
+      <td>Rome, Italy</td>
+      <td>Segni, Italy</td>
+      <td>Car</td>
+      <td>28.13</td>
+    </tr>
+    <tr>
+      <td>2025-06-17 11:00</td>
+      <td>Mignano Monte Lungo, Italy</td>
+      <td>Capua, Italy</td>
+      <td>Car</td>
+      <td>24.63</td>
+    </tr>
+    <tr>
+      <td>2025-06-17 12:07</td>
+      <td>Naples, Italy</td>
+      <td>Massa Lubrense, Italy</td>
+      <td>Car</td>
+      <td>19.09</td>
+    </tr>
+    <tr>
+      <td>2025-06-17 12:11</td>
+      <td>Massa Lubrense, Italy</td>
+      <td>Naples, Italy</td>
+      <td>Car</td>
+      <td>18.45</td>
+    </tr>
+    <tr>
+      <td>2025-06-18 15:07</td>
+      <td>Sorrento, Italy</td>
+      <td>None, None</td>
+      <td>Car</td>
+      <td>14.49</td>
+    </tr>
+    <tr>
+      <td>2025-06-18 15:15</td>
+      <td>None, None</td>
+      <td>None, Italy</td>
+      <td>Car</td>
+      <td>10.18</td>
+    </tr>
+    <tr>
+      <td>2025-06-18 17:49</td>
+      <td>Caivano, Italy</td>
+      <td>Rome, Italy</td>
+      <td>Flight</td>
+      <td>115.23</td>
+    </tr>
+    <tr>
+      <td>2025-06-20 13:09</td>
+      <td>Fiumicino, Italy</td>
+      <td>Slatine, Croatia</td>
+      <td>Flight</td>
+      <td>238.54</td>
+    </tr>
+    <tr>
+      <td>2025-06-21 11:09</td>
+      <td>Split, Croatia</td>
+      <td>None, Croatia</td>
+      <td>Car</td>
+      <td>12.56</td>
+    </tr>
+    <tr>
+      <td>2025-06-21 11:13</td>
+      <td>None, Croatia</td>
+      <td>Split, Croatia</td>
+      <td>Car</td>
+      <td>11.94</td>
+    </tr>
+    <tr>
+      <td>2025-06-22 07:18</td>
+      <td>None, Croatia</td>
+      <td>Grad Vis, Croatia</td>
+      <td>Car</td>
+      <td>22.22</td>
+    </tr>
+    <tr>
+      <td>2025-06-25 08:03</td>
+      <td>None, Croatia</td>
+      <td>Curzola, Croatia</td>
+      <td>Car</td>
+      <td>23.85</td>
+    </tr>
+    <tr>
+      <td>2025-06-26 07:18</td>
+      <td>Curzola, Croatia</td>
+      <td>Dubrovnik-Neretva County, Croatia</td>
+      <td>Car</td>
+      <td>13.44</td>
+    </tr>
+    <tr>
+      <td>2025-06-26 07:30</td>
+      <td>Dubrovnik-Neretva County, Croatia</td>
+      <td>Općina Orebić, Croatia</td>
+      <td>Car</td>
+      <td>13.24</td>
+    </tr>
+    <tr>
+      <td>2025-06-27 07:46</td>
+      <td>Polače, Croatia</td>
+      <td>Dubrovnik-Neretva County, Croatia</td>
+      <td>Car</td>
+      <td>16.32</td>
+    </tr>
+    <tr>
+      <td>2025-06-28 10:17</td>
+      <td>Dubrovnik, Croatia</td>
+      <td>None, Croatia</td>
+      <td>Car</td>
+      <td>25.98</td>
+    </tr>
+    <tr>
+      <td>2025-06-28 10:18</td>
+      <td>None, Croatia</td>
+      <td>Dubrovnik, Croatia</td>
+      <td>Car</td>
+      <td>25.13</td>
+    </tr>
+    <tr>
+      <td>2025-06-28 17:18</td>
+      <td>None, None</td>
+      <td>Martina Franca, Italy</td>
+      <td>Flight</td>
+      <td>136.44</td>
+    </tr>
+    <tr>
+      <td>2025-07-01 09:31</td>
+      <td>Cellino San Marco, Italy</td>
+      <td>Carovigno, Italy</td>
+      <td>Car</td>
+      <td>22.18</td>
+    </tr>
+    <tr>
+      <td>2025-07-01 09:32</td>
+      <td>Carovigno, Italy</td>
+      <td>Cellino San Marco, Italy</td>
+      <td>Car</td>
+      <td>21.28</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 07:00</td>
+      <td>Massafra, Italy</td>
+      <td>Trebisacce, Italy</td>
+      <td>Car</td>
+      <td>58.18</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 07:06</td>
+      <td>Trebisacce, Italy</td>
+      <td>Massafra, Italy</td>
+      <td>Car</td>
+      <td>54.58</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 08:55</td>
+      <td>Villapiana, Italy</td>
+      <td>San Lorenzo Del Vallo, Italy</td>
+      <td>Car</td>
+      <td>14.80</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 08:59</td>
+      <td>San Lorenzo Del Vallo, Italy</td>
+      <td>Villapiana Lido, Italy</td>
+      <td>Car</td>
+      <td>15.14</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 09:41</td>
+      <td>Tarsia, Italy</td>
+      <td>Rende, Italy</td>
+      <td>Car</td>
+      <td>15.60</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 10:22</td>
+      <td>Cosenza, Italy</td>
+      <td>Nocera Scalo, Italy</td>
+      <td>Car</td>
+      <td>21.15</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 10:23</td>
+      <td>Nocera Scalo, Italy</td>
+      <td>Cosenza, Italy</td>
+      <td>Car</td>
+      <td>21.12</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 13:18</td>
+      <td>Pizzo, Italy</td>
+      <td>Parghelia, Italy</td>
+      <td>Car</td>
+      <td>15.58</td>
+    </tr>
+    <tr>
+      <td>2025-07-02 13:21</td>
+      <td>Parghelia, Italy</td>
+      <td>Pizzo, Italy</td>
+      <td>Car</td>
+      <td>14.63</td>
+    </tr>
+    <tr>
+      <td>2025-07-04 06:54</td>
+      <td>Ricadi, Italy</td>
+      <td>Bagnara Calabra, Italy</td>
+      <td>Car</td>
+      <td>25.41</td>
+    </tr>
+    <tr>
+      <td>2025-07-04 06:59</td>
+      <td>Bagnara Calabra, Italy</td>
+      <td>Ricadi, Italy</td>
+      <td>Car</td>
+      <td>25.39</td>
+    </tr>
+    <tr>
+      <td>2025-07-07 09:33</td>
+      <td>Taormina, Italy</td>
+      <td>Scillato, Italy</td>
+      <td>Car</td>
+      <td>77.64</td>
+    </tr>
+    <tr>
+      <td>2025-07-07 09:34</td>
+      <td>Scillato, Italy</td>
+      <td>Taormina, Italy</td>
+      <td>Car</td>
+      <td>78.02</td>
+    </tr>
+    <tr>
+      <td>2025-07-07 11:40</td>
+      <td>Taormina, Italy</td>
+      <td>Polizzi Generosa, Italy</td>
+      <td>Car</td>
+      <td>71.48</td>
+    </tr>
+    <tr>
+      <td>2025-07-08 07:42</td>
+      <td>Santa Flavia, Italy</td>
+      <td>Campofelice Di Roccella, Italy</td>
+      <td>Car</td>
+      <td>19.32</td>
+    </tr>
+    <tr>
+      <td>2025-07-08 07:49</td>
+      <td>Campofelice Di Roccella, Italy</td>
+      <td>Bagheria, Italy</td>
+      <td>Car</td>
+      <td>20.73</td>
+    </tr>
+    <tr>
+      <td>2025-07-08 14:14</td>
+      <td>Cefalù, Italy</td>
+      <td>Casteldaccia, Italy</td>
+      <td>Car</td>
+      <td>25.37</td>
+    </tr>
+    <tr>
+      <td>2025-07-08 14:16</td>
+      <td>Casteldaccia, Italy</td>
+      <td>Cefalù, Italy</td>
+      <td>Car</td>
+      <td>24.29</td>
+    </tr>
+    <tr>
+      <td>2025-07-10 08:09</td>
+      <td>Santa Flavia, Italy</td>
+      <td>Bolognetta, Italy</td>
+      <td>Car</td>
+      <td>10.32</td>
+    </tr>
+    <tr>
+      <td>2025-07-10 09:05</td>
+      <td>Cefalà Diana, Italy</td>
+      <td>Aragona, Italy</td>
+      <td>Car</td>
+      <td>37.16</td>
+    </tr>
+    <tr>
+      <td>2025-07-10 09:15</td>
+      <td>Aragona, Italy</td>
+      <td>Mezzojuso, Italy</td>
+      <td>Car</td>
+      <td>35.04</td>
+    </tr>
+    <tr>
+      <td>2025-07-10 13:50</td>
+      <td>Province of Agrigento, Italy</td>
+      <td>Altavilla Milicia, Italy</td>
+      <td>Car</td>
+      <td>50.53</td>
+    </tr>
+    <tr>
+      <td>2025-07-10 13:55</td>
+      <td>Altavilla Milicia, Italy</td>
+      <td>Province of Agrigento, Italy</td>
+      <td>Car</td>
+      <td>49.56</td>
+    </tr>
+    <tr>
+      <td>2025-07-13 11:03</td>
+      <td>Palermo, Italy</td>
+      <td>Gioiosa Marea, Italy</td>
+      <td>Car</td>
+      <td>82.80</td>
+    </tr>
+    <tr>
+      <td>2025-07-13 14:12</td>
+      <td>Patti, Italy</td>
+      <td>Taormina, Italy</td>
+      <td>Car</td>
+      <td>25.61</td>
+    </tr>
+    <tr>
+      <td>2025-07-13 22:57</td>
+      <td>Riposto, Italy</td>
+      <td>Messina, Italy</td>
+      <td>Car</td>
+      <td>37.41</td>
+    </tr>
+    <tr>
+      <td>2025-07-14 07:38</td>
+      <td>Messina, Italy</td>
+      <td>Capo d'Orlando, Italy</td>
+      <td>Car</td>
+      <td>44.42</td>
+    </tr>
+    <tr>
+      <td>2025-07-14 09:20</td>
+      <td>Capo d'Orlando, Italy</td>
+      <td>Messina, Italy</td>
+      <td>Car</td>
+      <td>44.53</td>
+    </tr>
+    <tr>
+      <td>2025-07-14 10:10</td>
+      <td>None, None</td>
+      <td>Curinga, Italy</td>
+      <td>Car</td>
+      <td>55.61</td>
+    </tr>
+    <tr>
+      <td>2025-07-14 12:11</td>
+      <td>Curinga, Italy</td>
+      <td>Gioia Tauro, Italy</td>
+      <td>Car</td>
+      <td>35.54</td>
+    </tr>
+    <tr>
+      <td>2025-07-14 12:45</td>
+      <td>Gioia Tauro, Italy</td>
+      <td>Francavilla Angitola, Italy</td>
+      <td>Car</td>
+      <td>29.85</td>
+    </tr>
+    <tr>
+      <td>2025-07-14 13:45</td>
+      <td>Nocera Scalo, Italy</td>
+      <td>Longobardi, Italy</td>
+      <td>Car</td>
+      <td>13.55</td>
+    </tr>
+    <tr>
+      <td>2025-07-14 14:51</td>
+      <td>Longobardi, Italy</td>
+      <td>Maratea, Italy</td>
+      <td>Car</td>
+      <td>57.36</td>
+    </tr>
+    <tr>
+      <td>2025-07-14 20:56</td>
+      <td>Maratea, Italy</td>
+      <td>Cirella, Italy</td>
+      <td>Car</td>
+      <td>19.54</td>
+    </tr>
+    <tr>
+      <td>2025-07-15 08:10</td>
+      <td>Diamante, Italy</td>
+      <td>Aprilia, Italy</td>
+      <td>Flight</td>
+      <td>214.68</td>
+    </tr>
+    <tr>
+      <td>2025-07-15 08:36</td>
+      <td>Aprilia, Italy</td>
+      <td>Rome, Italy</td>
+      <td>Car</td>
+      <td>12.06</td>
+    </tr>
+    <tr>
+      <td>2025-07-16 22:50</td>
+      <td>Fiumicino, Italy</td>
+      <td>SeaTac, United States</td>
+      <td>Flight</td>
+      <td>5673.41</td>
+    </tr>
+    <tr>
+      <td>2025-07-21 16:01</td>
+      <td>Seattle, United States</td>
+      <td>Hailey, United States</td>
+      <td>Flight</td>
+      <td>471.65</td>
+    </tr>
+    <tr>
+      <td>2025-07-21 17:04</td>
+      <td>Hailey, United States</td>
+      <td>Fairfield, United States</td>
+      <td>Car</td>
+      <td>24.57</td>
+    </tr>
+    <tr>
+      <td>2025-07-21 17:06</td>
+      <td>Fairfield, United States</td>
+      <td>Camas County, United States</td>
+      <td>Car</td>
+      <td>12.13</td>
+    </tr>
+    <tr>
+      <td>2025-07-21 17:19</td>
+      <td>Camas County, United States</td>
+      <td>Hailey, United States</td>
+      <td>Car</td>
+      <td>18.35</td>
+    </tr>
+    <tr>
+      <td>2025-07-23 21:12</td>
+      <td>Hailey, United States</td>
+      <td>Mercer Island, United States</td>
+      <td>Flight</td>
+      <td>476.52</td>
+    </tr>
+    <tr>
+      <td>2025-08-07 17:16</td>
+      <td>Seattle, United States</td>
+      <td>Hood River County, United States</td>
+      <td>Flight</td>
+      <td>154.51</td>
+    </tr>
+    <tr>
+      <td>2025-08-07 17:32</td>
+      <td>Hood River County, United States</td>
+      <td>Bend, United States</td>
+      <td>Car</td>
+      <td>87.98</td>
+    </tr>
+    <tr>
+      <td>2025-08-08 18:39</td>
+      <td>Bend, United States</td>
+      <td>Sisters, United States</td>
+      <td>Car</td>
+      <td>12.35</td>
+    </tr>
+    <tr>
+      <td>2025-08-08 18:41</td>
+      <td>Sisters, United States</td>
+      <td>Bend, United States</td>
+      <td>Car</td>
+      <td>12.27</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 00:03</td>
+      <td>Sisters, United States</td>
+      <td>Bend, United States</td>
+      <td>Car</td>
+      <td>19.63</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 00:07</td>
+      <td>Bend, United States</td>
+      <td>Sisters, United States</td>
+      <td>Car</td>
+      <td>18.07</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 14:55</td>
+      <td>Bend, United States</td>
+      <td>Hines, United States</td>
+      <td>Flight</td>
+      <td>108.95</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 14:56</td>
+      <td>Hines, United States</td>
+      <td>Bend, United States</td>
+      <td>Flight</td>
+      <td>108.84</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 15:42</td>
+      <td>Millican, United States</td>
+      <td>Deschutes County, United States</td>
+      <td>Car</td>
+      <td>10.57</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 16:07</td>
+      <td>Deschutes County, United States</td>
+      <td>Lake County, United States</td>
+      <td>Car</td>
+      <td>10.64</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 16:49</td>
+      <td>Harney County, United States</td>
+      <td>Hines, United States</td>
+      <td>Car</td>
+      <td>11.24</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 17:46</td>
+      <td>Hines, United States</td>
+      <td>Ontario, United States</td>
+      <td>Flight</td>
+      <td>105.64</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 17:51</td>
+      <td>Ontario, United States</td>
+      <td>Burns, United States</td>
+      <td>Flight</td>
+      <td>104.24</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 20:24</td>
+      <td>Ontario, United States</td>
+      <td>Elmore County, United States</td>
+      <td>Car</td>
+      <td>75.13</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 20:26</td>
+      <td>Elmore County, United States</td>
+      <td>Ontario, United States</td>
+      <td>Car</td>
+      <td>75.34</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 22:24</td>
+      <td>Mountain Home, United States</td>
+      <td>Hailey, United States</td>
+      <td>Car</td>
+      <td>76.16</td>
+    </tr>
+    <tr>
+      <td>2025-08-09 22:30</td>
+      <td>Hailey, United States</td>
+      <td>Mountain Home, United States</td>
+      <td>Car</td>
+      <td>73.10</td>
+    </tr>
+    <tr>
+      <td>2025-08-11 20:44</td>
+      <td>Ketchum, United States</td>
+      <td>Bellevue, United States</td>
+      <td>Car</td>
+      <td>15.34</td>
+    </tr>
+    <tr>
+      <td>2025-08-11 20:45</td>
+      <td>Bellevue, United States</td>
+      <td>Ketchum, United States</td>
+      <td>Car</td>
+      <td>15.07</td>
+    </tr>
+    <tr>
+      <td>2025-08-11 21:39</td>
+      <td>Bellevue, United States</td>
+      <td>Ketchum, United States</td>
+      <td>Car</td>
+      <td>14.71</td>
+    </tr>
+    <tr>
+      <td>2025-08-11 21:42</td>
+      <td>Ketchum, United States</td>
+      <td>Bellevue, United States</td>
+      <td>Car</td>
+      <td>14.00</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 15:26</td>
+      <td>Hailey, United States</td>
+      <td>Fairfield, United States</td>
+      <td>Car</td>
+      <td>17.38</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 15:30</td>
+      <td>Fairfield, United States</td>
+      <td>Hailey, United States</td>
+      <td>Car</td>
+      <td>17.60</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 15:33</td>
+      <td>Hailey, United States</td>
+      <td>Blaine County, United States</td>
+      <td>Car</td>
+      <td>13.41</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 15:50</td>
+      <td>Fairfield, United States</td>
+      <td>Gem County, United States</td>
+      <td>Flight</td>
+      <td>103.85</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 16:18</td>
+      <td>Gem County, United States</td>
+      <td>Sunnyside, United States</td>
+      <td>Flight</td>
+      <td>233.12</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 16:20</td>
+      <td>Sunnyside, United States</td>
+      <td>Wapato, United States</td>
+      <td>Car</td>
+      <td>17.44</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 16:24</td>
+      <td>Moxee City, United States</td>
+      <td>Naches, United States</td>
+      <td>Car</td>
+      <td>28.22</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 16:29</td>
+      <td>Yakima County, United States</td>
+      <td>Yakima, United States</td>
+      <td>Car</td>
+      <td>22.06</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 16:35</td>
+      <td>Yakima, United States</td>
+      <td>Black Diamond, United States</td>
+      <td>Car</td>
+      <td>40.22</td>
+    </tr>
+    <tr>
+      <td>2025-08-13 16:52</td>
+      <td>Black Diamond, United States</td>
+      <td>Seattle, United States</td>
+      <td>Car</td>
+      <td>18.74</td>
+    </tr>
+    <tr>
+      <td>2025-08-20 16:18</td>
+      <td>Seattle, United States</td>
+      <td>Graham, United States</td>
+      <td>Car</td>
+      <td>36.51</td>
+    </tr>
+    <tr>
+      <td>2025-08-20 19:43</td>
+      <td>Graham, United States</td>
+      <td>Bend, United States</td>
+      <td>Flight</td>
+      <td>210.86</td>
+    </tr>
+    <tr>
+      <td>2025-08-21 17:52</td>
+      <td>Bend, United States</td>
+      <td>Hines, United States</td>
+      <td>Flight</td>
+      <td>108.49</td>
+    </tr>
+    <tr>
+      <td>2025-08-21 17:56</td>
+      <td>Hines, United States</td>
+      <td>Bend, United States</td>
+      <td>Flight</td>
+      <td>108.29</td>
+    </tr>
+    <tr>
+      <td>2025-08-21 22:02</td>
+      <td>Juntura, United States</td>
+      <td>Cairo, United States</td>
+      <td>Car</td>
+      <td>56.32</td>
+    </tr>
+    <tr>
+      <td>2025-08-21 22:52</td>
+      <td>Cairo, United States</td>
+      <td>Vale, United States</td>
+      <td>Car</td>
+      <td>20.32</td>
+    </tr>
+    <tr>
+      <td>2025-08-21 23:47</td>
+      <td>Ontario, United States</td>
+      <td>Boise, United States</td>
+      <td>Car</td>
+      <td>44.16</td>
+    </tr>
+    <tr>
+      <td>2025-08-21 23:50</td>
+      <td>Boise, United States</td>
+      <td>Fruitland, United States</td>
+      <td>Car</td>
+      <td>39.41</td>
+    </tr>
+    <tr>
+      <td>2025-08-22 15:52</td>
+      <td>Garden City, United States</td>
+      <td>Elmore County, United States</td>
+      <td>Car</td>
+      <td>34.91</td>
+    </tr>
+    <tr>
+      <td>2025-08-22 15:58</td>
+      <td>Elmore County, United States</td>
+      <td>Boise, United States</td>
+      <td>Car</td>
+      <td>35.31</td>
+    </tr>
+    <tr>
+      <td>2025-08-22 16:53</td>
+      <td>Mountain Home, United States</td>
+      <td>Ketchum, United States</td>
+      <td>Car</td>
+      <td>74.25</td>
+    </tr>
+    <tr>
+      <td>2025-08-22 16:56</td>
+      <td>Ketchum, United States</td>
+      <td>Mountain Home, United States</td>
+      <td>Car</td>
+      <td>72.39</td>
+    </tr>
+    <tr>
+      <td>2025-08-24 16:37</td>
+      <td>Ketchum, United States</td>
+      <td>Hailey, United States</td>
+      <td>Car</td>
+      <td>11.48</td>
+    </tr>
+    <tr>
+      <td>2025-08-24 16:40</td>
+      <td>Hailey, United States</td>
+      <td>Ketchum, United States</td>
+      <td>Car</td>
+      <td>11.17</td>
+    </tr>
+    <tr>
+      <td>2025-08-25 18:19</td>
+      <td>Ketchum, United States</td>
+      <td>Stanley, United States</td>
+      <td>Car</td>
+      <td>34.05</td>
+    </tr>
+    <tr>
+      <td>2025-08-25 18:20</td>
+      <td>Stanley, United States</td>
+      <td>Ketchum, United States</td>
+      <td>Car</td>
+      <td>34.15</td>
+    </tr>
+    <tr>
+      <td>2025-08-25 19:38</td>
+      <td>Blaine County, United States</td>
+      <td>Stanley, United States</td>
+      <td>Car</td>
+      <td>12.28</td>
+    </tr>
+    <tr>
+      <td>2025-08-26 16:11</td>
+      <td>Stanley, United States</td>
+      <td>Blaine County, United States</td>
+      <td>Car</td>
+      <td>16.45</td>
+    </tr>
+    <tr>
+      <td>2025-08-26 16:42</td>
+      <td>Blaine County, United States</td>
+      <td>Ketchum, United States</td>
+      <td>Car</td>
+      <td>16.85</td>
+    </tr>
+  </tbody>
+</table>
+        </div>
+        
+        <div class="actions">
+            <a href="javascript:window.print()" class="btn">Print Table</a>
+            <a href="javascript:exportToCSV()" class="btn btn-secondary">Export CSV</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Back to Results</a>
+        </div>
+    </div>
+    
+    <script>
+        let sortDirection = {};
+        
+        function filterTable() {
+            const input = document.getElementById('searchBox');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('dataTable');
+            const rows = table.getElementsByTagName('tr');
+            let visibleCount = 0;
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const cells = row.getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(filter)) {
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if (found) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+            
+            document.getElementById('recordCount').textContent = visibleCount;
+        }
+        
+        function sortTable(header) {
+            const table = document.getElementById('dataTable');
+            const columnIndex = Array.from(header.parentNode.children).indexOf(header);
+            const rows = Array.from(table.getElementsByTagName('tr')).slice(1);
+            
+            const isNumeric = rows.length > 0 && !isNaN(parseFloat(rows[0].cells[columnIndex].textContent));
+            
+            sortDirection[columnIndex] = sortDirection[columnIndex] === 'asc' ? 'desc' : 'asc';
+            
+            rows.sort((a, b) => {
+                const aValue = a.cells[columnIndex].textContent.trim();
+                const bValue = b.cells[columnIndex].textContent.trim();
+                
+                let comparison;
+                if (isNumeric) {
+                    comparison = parseFloat(aValue) - parseFloat(bValue);
+                } else {
+                    comparison = aValue.localeCompare(bValue);
+                }
+                
+                return sortDirection[columnIndex] === 'asc' ? comparison : -comparison;
+            });
+            
+            // Update sort arrows
+            document.querySelectorAll('.sort-arrow').forEach(arrow => arrow.remove());
+            const arrow = document.createElement('span');
+            arrow.className = 'sort-arrow';
+            arrow.textContent = sortDirection[columnIndex] === 'asc' ? ' ↑' : ' ↓';
+            header.appendChild(arrow);
+            
+            // Re-insert sorted rows
+            const tbody = table.getElementsByTagName('tbody')[0] || table;
+            rows.forEach(row => tbody.appendChild(row));
+        }
+        
+        function exportToCSV() {
+            const table = document.getElementById('dataTable');
+            const rows = table.getElementsByTagName('tr');
+            const csvContent = [];
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                if (row.style.display !== 'none') {
+                    const cells = row.getElementsByTagName(i === 0 ? 'th' : 'td');
+                    const rowData = Array.from(cells).map(cell => 
+                        '"' + cell.textContent.replace(/"/g, '""') + '"'
+                    );
+                    csvContent.push(rowData.join(','));
+                }
+            }
+            
+            const blob = new Blob([csvContent.join('\n')], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'city_jumps_with_mode.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Add row click highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('dataTable');
+            const rows = table.getElementsByTagName('tr');
+            
+            for(let i = 1; i < rows.length; i++) {
+                rows[i].onclick = function() {
+                    // Remove previous highlights
+                    for(let j = 1; j < rows.length; j++) {
+                        rows[j].classList.remove('highlight');
+                    }
+                    // Add highlight to clicked row
+                    this.classList.add('highlight');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

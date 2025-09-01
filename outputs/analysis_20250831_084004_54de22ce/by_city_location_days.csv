@@ -1,0 +1,531 @@
+Location,Fractional Days
+"Kihei, United States",77.9
+"Mercer Island, United States",44.5
+"Ketchum, United States",20.3
+"Wailea, United States",18.9
+"Rome, Italy",4.7
+"Sun Valley, United States",4.5
+"Cabo San Lucas, Mexico",4.1
+"Tavarnelle Val Di Pesa, Italy",4.0
+"Roche Harbor, United States",3.7
+"Santa Flavia, Italy",3.7
+"Taormina, Italy",3.2
+"Makawao, United States",3.2
+"Seattle, United States",3.1
+"Bend, United States",2.8
+"Bellevue, United States",2.3
+"Martina Franca, Italy",2.2
+"Kahului, United States",2.0
+"None, Croatia",1.9
+"Kailua Kona, United States",1.7
+"Paia, United States",1.6
+"Ricadi, Italy",1.6
+"SeaTac, United States",1.5
+"Curzola, Croatia",1.3
+"Fiumicino, Italy",1.2
+"Medina, United States",1.1
+"Palermo, Italy",1.0
+"Lecce, Italy",0.9
+"Stanley, United States",0.9
+"Split, Croatia",0.9
+"Dubrovnik-Neretva County, Croatia",0.9
+"Positano, Italy",0.8
+"Montepulciano, Italy",0.8
+"Grad Vis, Croatia",0.8
+"Split-Dalmatia County, Croatia",0.7
+"Hailey, United States",0.6
+"Garden City, United States",0.6
+"Lissa, Croatia",0.6
+"Canale Monterano, Italy",0.6
+"Wailuku, United States",0.6
+"Maui County, United States",0.5
+"Schiphol, Netherlands",0.5
+"None, None",0.4
+"Los Cabos, Mexico",0.4
+"Maui, United States",0.4
+"Capo d'Orlando, Italy",0.4
+"Makena, United States",0.4
+"Lahaina, United States",0.4
+"Grad Korčula, Croatia",0.3
+"Las Veredas, Mexico",0.3
+"Blaine County, United States",0.3
+"Maratea, Italy",0.3
+"Florence, Italy",0.3
+"Diamante, Italy",0.2
+"Aprilia, Italy",0.2
+"Bagheria, Italy",0.2
+"Cefalù, Italy",0.2
+"San Juan County, United States",0.2
+"Dubrovnik, Croatia",0.2
+"Arienzo, Italy",0.2
+"Sisters, United States",0.2
+"Messina, Italy",0.2
+"Locorotondo, Italy",0.2
+"None, United States of America",0.2
+"Gaiole In Chianti, Italy",0.2
+"San Juan, United States",0.2
+"Grad Hvar, Croatia",0.2
+"Kailua, United States",0.1
+"San José del Cabo, Mexico",0.1
+"Radda In Chianti, Italy",0.1
+"Gioiosa Marea, Italy",0.1
+"Polače, Croatia",0.1
+"Newcastle, United States",0.1
+"Lesina, Croatia",0.1
+"Redmond, United States",0.1
+"Camporeale, Italy",0.1
+"Brindisi, Italy",0.1
+"Ostuni, Italy",0.1
+"Pukalani, United States",0.1
+"Kirkland, United States",0.1
+"Rina, Italy",0.1
+"Barberino Val D'Elsa, Italy",0.1
+"Maʻalaea, United States",0.1
+"Island, United States",0.1
+"Polizzi Generosa, Italy",0.1
+"Casteldaccia, Italy",0.1
+"Fairfield, United States",0.1
+"Gioia Tauro, Italy",0.1
+"Boise, United States",0.1
+"Poggioreale, Italy",0.1
+"Jefferson, United States",0.1
+"Alberobello, Italy",0.1
+"Castellina In Chianti, Italy",0.1
+"Agrigento, Italy",0.1
+"Hines, United States",0.1
+"Naples, Italy",0.1
+"Harney County, United States",0.1
+"Malheur County, United States",0.1
+"Carovigno, Italy",0.1
+"Seatac, United States",0.1
+"Elmore County, United States",0.1
+"Province of Agrigento, Italy",0.1
+"Lakewood, United States",0.1
+"Tropea, Italy",0.1
+"Radda in Chianti, Italy",0.1
+"Mountain Home, United States",0.1
+"Pizzo, Italy",0.1
+"Issaquah, United States",0.1
+"Maalaea, United States",0.1
+"King County, United States",0.1
+"Clyde Hill, United States",0.1
+"Tukwila, United States",0.1
+"Colle di Val d'Elsa, Italy",0.1
+"Orvieto, Italy",0.0
+"Kingston, United States",0.0
+"Kula, United States",0.0
+"Deschutes County, United States",0.0
+"Chiusi, Italy",0.0
+"None, Italy",0.0
+"None, Mexico",0.0
+"Kanahena, United States",0.0
+"Villa San Giovanni, Italy",0.0
+"Kitsap, United States",0.0
+"Cirella, Italy",0.0
+"Olympia, United States",0.0
+"Rapolano Terme, Italy",0.0
+"Keokea, United States",0.0
+"Monreale, Italy",0.0
+"Scillato, Italy",0.0
+"San Nicolò, Italy",0.0
+"King, United States",0.0
+"Kent, United States",0.0
+"Olowalu, United States",0.0
+"Waipahu, United States",0.0
+"Termini Imerese, Italy",0.0
+"Massa Lubrense, Italy",0.0
+"Hampton, United States",0.0
+"Hawaii County, United States",0.0
+"Francavilla Angitola, Italy",0.0
+"Halepalaoa Landing, United States",0.0
+"Burns, United States",0.0
+"Ontario, United States",0.0
+"Sorrento, Italy",0.0
+"Haiku, United States",0.0
+"Caldwell, United States",0.0
+"Castellina in Chianti, Italy",0.0
+"Vale, United States",0.0
+"Buchanan, United States",0.0
+"Furci Siculo, Italy",0.0
+"Poggibonsi, Italy",0.0
+"San Lorenzo Del Vallo, Italy",0.0
+"Nocera Scalo, Italy",0.0
+"None, Montenegro",0.0
+"Allerona, Italy",0.0
+"Lopud, Croatia",0.0
+"Renton, United States",0.0
+"Attigliano, Italy",0.0
+"Tacoma, United States",0.0
+"Lake County, United States",0.0
+"Gizzeria, Italy",0.0
+"Colle Di Val D'Elsa, Italy",0.0
+"Bracciano, Italy",0.0
+"Altavilla Milicia, Italy",0.0
+"Prosser, United States",0.0
+"Provodina, Montenegro",0.0
+"Sinalunga, Italy",0.0
+"Castelnuovo Berardenga, Italy",0.0
+"Herceg Novi, Montenegro",0.0
+"Hood River County, United States",0.0
+"Cosenza, Italy",0.0
+"Siena, Italy",0.0
+"Santa Domenica, Italy",0.0
+"Graffignano, Italy",0.0
+"Burien, United States",0.0
+"Santa Teresa di Riva, Italy",0.0
+"Cellino San Marco, Italy",0.0
+"Goveđari, Croatia",0.0
+"Federal Way, United States",0.0
+"Waikapu, United States",0.0
+"Hansville, United States",0.0
+"Capranica, Italy",0.0
+"Scandicci, Italy",0.0
+"Lamezia Terme, Italy",0.0
+"Massafra, Italy",0.0
+"Colonia del Sol, Mexico",0.0
+"Camas County, United States",0.0
+"Fasano, Italy",0.0
+"Kaupakalua, United States",0.0
+"Juntura, United States",0.0
+"Patti, Italy",0.0
+"Bomarzo, Italy",0.0
+"Lacey, United States",0.0
+"Nicotera, Italy",0.0
+"Monteriggioni, Italy",0.0
+"Caltavuturo, Italy",0.0
+"Millican, United States",0.0
+"Gizzeria Lido, Italy",0.0
+"Cisternino, Italy",0.0
+"Pulehu, United States",0.0
+"Tumalo, United States",0.0
+"Gem County, United States",0.0
+"Civitella D'Agliano, Italy",0.0
+"Fort Lewis, United States",0.0
+"Yakima, United States",0.0
+"Fiano Romano, Italy",0.0
+"Longobardi, Italy",0.0
+"Haʻikū, United States",0.0
+"Gricignano di Aversa, Italy",0.0
+"Trabia, Italy",0.0
+"Manziana, Italy",0.0
+"Magliano Sabina, Italy",0.0
+"Valmontone, Italy",0.0
+"Misilmeri, Italy",0.0
+"Nampa, United States",0.0
+"Meridian, United States",0.0
+"Trebisacce, Italy",0.0
+"Washington County, United States",0.0
+"Hermiston, United States",0.0
+"Pierce County, United States",0.0
+"Baschi, Italy",0.0
+"Ficulle, Italy",0.0
+"Ficarazzi, Italy",0.0
+"Vicari, Italy",0.0
+"Villapiana, Italy",0.0
+"Aragona, Italy",0.0
+"Rende, Italy",0.0
+"Bagnara Calabra, Italy",0.0
+"Fife, United States",0.0
+"Freeland, United States",0.0
+"Cerveteri, Italy",0.0
+"Vetralla, Italy",0.0
+"Viterbo, Italy",0.0
+"Cetona, Italy",0.0
+"Orte, Italy",0.0
+"Casoria, Italy",0.0
+"Joppolo, Italy",0.0
+"Letojanni, Italy",0.0
+"Cerda, Italy",0.0
+"Los Cabos Municipality, Mexico",0.0
+"Cairo, United States",0.0
+"Kalaoa, United States",0.0
+"Ponzano Romano, Italy",0.0
+"Nazzano, Italy",0.0
+"Capena, Italy",0.0
+"Savoca, Italy",0.0
+"Caltanissetta, Italy",0.0
+"New Plymouth, United States",0.0
+"Impruneta, Italy",0.0
+"Općina Vela Luka, Croatia",0.0
+"San Cipirello, Italy",0.0
+"Woodinville, United States",0.0
+"Giove, Italy",0.0
+"Orvieto Scalo, Italy",0.0
+"Tavarnelle, Italy",0.0
+"Union, United States",0.0
+"Sunnyside, United States",0.0
+"El Tezal, Mexico",0.0
+"Lepetane, Montenegro",0.0
+"Campi Salentina, Italy",0.0
+"San Pietro Vernotico, Italy",0.0
+"Cassano all'Ionio, Italy",0.0
+"Vibo Valentia, Italy",0.0
+"Sant'Alessio Siculo, Italy",0.0
+"Cammarata, Italy",0.0
+"Graham, United States",0.0
+"Ceprano, Italy",0.0
+"Parghelia, Italy",0.0
+"Cefalà Diana, Italy",0.0
+"Fruitland, United States",0.0
+"Waiakoa, United States",0.0
+"Campofelice Di Roccella, Italy",0.0
+"Yakima County, United States",0.0
+"Manele, United States",0.0
+"Città Della Pieve, Italy",0.0
+"Sperone, Italy",0.0
+"Mezzojuso, Italy",0.0
+"Castronovo di Sicilia, Italy",0.0
+"Piano Maglio - Blandino, Italy",0.0
+"Tivat, Montenegro",0.0
+"Black Diamond, United States",0.0
+"Milton, United States",0.0
+"Greve In Chianti, Italy",0.0
+"Ciconia, Italy",0.0
+"Cervaro, Italy",0.0
+"Albidona, Italy",0.0
+"Nocera Terinese, Italy",0.0
+"Briatico, Italy",0.0
+"San Ferdinando, Italy",0.0
+"Rosarno, Italy",0.0
+"Campofelice di Roccella, Italy",0.0
+"Villafrati, Italy",0.0
+"Campofranco, Italy",0.0
+"Favara, Italy",0.0
+"Curinga, Italy",0.0
+"Grad Kaštela, Croatia",0.0
+"Città del Vaticano, Vatican City",0.0
+"Lōpā, United States",0.0
+"Piana del Sole, Italy",0.0
+"Fabro, Italy",0.0
+"Chianciano Terme, Italy",0.0
+"Foglia, Italy",0.0
+"Ceccano, Italy",0.0
+"Roccasecca, Italy",0.0
+"Succivo, Italy",0.0
+"Grad Solin, Croatia",0.0
+"Općina Orebić, Croatia",0.0
+"Đurići, Montenegro",0.0
+"Torchiarolo, Italy",0.0
+"Trepuzzi, Italy",0.0
+"Rocca Imperiale, Italy",0.0
+"Roseto Capo Spulico, Italy",0.0
+"Ada County, United States",0.0
+"Torrita Di Siena, Italy",0.0
+"Slatine, Croatia",0.0
+"Alviano, Italy",0.0
+"Ponticelli, Italy",0.0
+"Narni, Italy",0.0
+"Cavtat, Croatia",0.0
+"Palagiano, Italy",0.0
+"Castellaneta, Italy",0.0
+"Pisticci, Italy",0.0
+"Scanzano Jonico, Italy",0.0
+"Policoro, Italy",0.0
+"Lercara Friddi, Italy",0.0
+"Comitini, Italy",0.0
+"Canicattì, Italy",0.0
+"Kuna, United States",0.0
+"Bothell, United States",0.0
+"None, United States",0.0
+"Anagni, Italy",0.0
+"Frosinone, Italy",0.0
+"Caivano, Italy",0.0
+"Općina Milna, Croatia",0.0
+"Općina Ston, Croatia",0.0
+"Igalo, Montenegro",0.0
+"Donja Lastva, Montenegro",0.0
+"Serra di Ulivo, Italy",0.0
+"Brivadi, Italy",0.0
+"Jošice, Montenegro",0.0
+"Villapiana Lido, Italy",0.0
+"Bolognetta, Italy",0.0
+"Castiglione In Teverina, Italy",0.0
+"Meljine, Montenegro",0.0
+"Des Moines, United States",0.0
+"Kaonoulu, United States",0.0
+"Haiku-Pauwela, United States",0.0
+"Oriolo, Italy",0.0
+"Città della Pieve, Italy",0.0
+"San Casciano in Val di Pesa, Italy",0.0
+"Petignano, Italy",0.0
+"Castelnuovo Di Porto, Italy",0.0
+"Riano, Italy",0.0
+"Sgurgola, Italy",0.0
+"Ferentino, Italy",0.0
+"Castro Dei Volsci, Italy",0.0
+"Cassino, Italy",0.0
+"Mignano Monte Lungo, Italy",0.0
+"Marzano Appio, Italy",0.0
+"Calvi Risorta, Italy",0.0
+"Kastel Stafilic, Croatia",0.0
+"Sabbioncello, Croatia",0.0
+"Portonovi, Montenegro",0.0
+"Bijela, Montenegro",0.0
+"Surbo, Italy",0.0
+"Ginosa, Italy",0.0
+"Bernalda, Italy",0.0
+"Amendolara, Italy",0.0
+"Quattromiglia, Italy",0.0
+"Altilia, Italy",0.0
+"Palmi, Italy",0.0
+"Castellana Sicula, Italy",0.0
+"Lascari, Italy",0.0
+"Portella di Mare, Italy",0.0
+"Casteltermini, Italy",0.0
+"Province of Caltanissetta, Italy",0.0
+"Santa Caterina Villarmosa, Italy",0.0
+"Petralia Sottana, Italy",0.0
+"Fiumefreddo di Sicilia, Italy",0.0
+"Giarre, Italy",0.0
+"Riley, United States",0.0
+"Drewsey, United States",0.0
+"Tarsia, Italy",0.0
+"Auburn, United States",0.0
+"Dupont, United States",0.0
+"Bainbridge Island, United States",0.0
+"Ulupalakua, United States",0.0
+"Oriolo Romano, Italy",0.0
+"Soriano nel Cimino, Italy",0.0
+"Scadicci, Italy",0.0
+"Torrita di Siena, Italy",0.0
+"Sant'Albino, Italy",0.0
+"Otricoli, Italy",0.0
+"Segni, Italy",0.0
+"Arce, Italy",0.0
+"Donja Banda, Croatia",0.0
+"Mlini, Croatia",0.0
+"Čilipi, Croatia",0.0
+"Marina di Roseto Capo Spulico, Italy",0.0
+"Cassano All'Ionio, Italy",0.0
+"Torano Castello, Italy",0.0
+"Belsito, Italy",0.0
+"Castiglione Marittimo, Italy",0.0
+"Zambrone, Italy",0.0
+"Scilla, Italy",0.0
+"Racalmuto, Italy",0.0
+"Villarosa, Italy",0.0
+"Resuttano, Italy",0.0
+"Altofonte, Italy",0.0
+"Glenns Ferry, United States",0.0
+"Novoli, Italy",0.0
+"Camas, United States",0.0
+"Elmore, United States",0.0
+"Lower Paia, United States",0.0
+"McChord AFB, United States",0.0
+"Lewis County, United States",0.0
+"Haliimaile, United States",0.0
+"Jefferson County, United States",0.0
+"Island County, United States",0.0
+"La Cura, Italy",0.0
+"Vitorchiano, Italy",0.0
+"Asciano, Italy",0.0
+"San Casciano In Val Di Pesa, Italy",0.0
+"Torrita, Italy",0.0
+"Collevecchio, Italy",0.0
+"La Massimina - Casal Lumbroso, Italy",0.0
+"Gavignano, Italy",0.0
+"Pofi, Italy",0.0
+"Colfelice, Italy",0.0
+"San Vittore Del Lazio, Italy",0.0
+"Capua, Italy",0.0
+"San Tammaro, Italy",0.0
+"Marcianise, Italy",0.0
+"Teverola, Italy",0.0
+"Čibača, Croatia",0.0
+"Konavle, Croatia",0.0
+"Gruda, Croatia",0.0
+"Pločice, Croatia",0.0
+"Zelenika, Montenegro",0.0
+"Đenovići, Montenegro",0.0
+"Baošići, Montenegro",0.0
+"Mrčevac, Montenegro",0.0
+"Marina di Amendolara, Italy",0.0
+"Sibari, Italy",0.0
+"Castrovillari, Italy",0.0
+"Altomonte, Italy",0.0
+"Luzzi, Italy",0.0
+"Montalto Uffugo, Italy",0.0
+"Laurignano, Italy",0.0
+"Dipignano, Italy",0.0
+"Martirano, Italy",0.0
+"San Mango D'Aquino, Italy",0.0
+"Falerna Scalo, Italy",0.0
+"San Pietro A Maida, Italy",0.0
+"Vibo Marina, Italy",0.0
+"Guidomandri Marina, Italy",0.0
+"Alì Terme, Italy",0.0
+"San Giovanni Gemini, Italy",0.0
+"Acquaviva Platani, Italy",0.0
+"Serradifalco, Italy",0.0
+"Roccamena, Italy",0.0
+"Giardini-Naxos, Italy",0.0
+"Riposto, Italy",0.0
+"Payette County, United States",0.0
+"Canyon County, United States",0.0
+"Wapato, United States",0.0
+"Bisignano, Italy",0.0
+"Outlook, United States",0.0
+"Covington, United States",0.0
+"San José Viejo, Mexico",0.0
+"Centro Tre Denari, Italy",0.0
+"Ladispoli, Italy",0.0
+"Acquaviva, Italy",0.0
+"Montepulciano Stazione, Italy",0.0
+"Casetta, Italy",0.0
+"Taverne, Italy",0.0
+"Belverde, Italy",0.0
+"Tavarnelle Val di Pesa, Italy",0.0
+"Tavarnuzze, Italy",0.0
+"Sambuca, Italy",0.0
+"Caldare, Italy",0.0
+"Sant'Oreste, Italy",0.0
+"Gyyavyr, Italy",0.0
+"Filacciano, Italy",0.0
+"Frangelini, Italy",0.0
+"Morolo, Italy",0.0
+"Castrocielo, Italy",0.0
+"Aquino, Italy",0.0
+"Piedimonte San Germano, Italy",0.0
+"Villa Santa Lucia, Italy",0.0
+"Acerra, Italy",0.0
+"Afragola, Italy",0.0
+"Kupari, Croatia",0.0
+"Vitaljina, Croatia",0.0
+"Nova Siri Scalo, Italy",0.0
+"Siris, Italy",0.0
+"Montegiordano Marina, Italy",0.0
+"Spezzano Albanese, Italy",0.0
+"Saracena, Italy",0.0
+"San Lorenzo del Vallo, Italy",0.0
+"Roggiano Gravina, Italy",0.0
+"San Marco Argentano, Italy",0.0
+"Lattarico, Italy",0.0
+"Settimo, Italy",0.0
+"Paterno Calabro, Italy",0.0
+"Mangone, Italy",0.0
+"Piano Lago, Italy",0.0
+"Marzi, Italy",0.0
+"Martirano Lombardo, Italy",0.0
+"San Mango d'Aquino, Italy",0.0
+"Acconia, Italy",0.0
+"Rizziconi, Italy",0.0
+"Villa Cordopatri, Italy",0.0
+"Seminara, Italy",0.0
+"Ceramida - Pellegrina, Italy",0.0
+"Giampilieri, Italy",0.0
+"Scaletta Superiore, Italy",0.0
+"Itala, Italy",0.0
+"Nizza di Sicilia, Italy",0.0
+"Roccalumera, Italy",0.0
+"Ciminna, Italy",0.0
+"Sutera, Italy",0.0
+"Castrofilippo, Italy",0.0
+"Enna, Italy",0.0
+"Alimena, Italy",0.0
+"Villabate, Italy",0.0
+"Falerna, Italy",0.0
+"Shoshone, United States",0.0
+"Brothers, United States",0.0
+"Moxee City, United States",0.0
+"Naches, United States",0.0
+"Custer County, United States",0.0

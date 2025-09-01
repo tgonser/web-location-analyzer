@@ -423,8 +423,106 @@
             margin-top: 5px;
         }
     </style>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/storage-styles.css') }}">
 </head>
+
 <body>
+    <!-- START OF NEW STORAGE MANAGER HTML -->
+    <!-- TEST COMMENT - DELETE ME -->
+    <!-- Quick Access Panel (shows when saved data exists) -->
+    <div id="quickAccessPanel" style="display:none;" class="quick-access-panel">
+        <div class="panel-header">
+            <h3>📁 Saved Location Data</h3>
+            <button onclick="toggleDataPanel()" class="toggle-btn">▼</button>
+        </div>
+        
+        <div id="dataPanelContent" class="panel-content">
+            <!-- Recent subsets for quick access -->
+            <div class="recent-section">
+                <h4>Recent Date Ranges</h4>
+                <div id="recentSubsets" class="recent-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            
+            <!-- All saved data button -->
+            <button onclick="showAllSavedData()" class="view-all-btn">
+                View All Saved Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Full Data Manager Modal -->
+    <div id="dataManagerModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage Location Data</h2>
+                <span class="close" onclick="closeDataManager()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Tab navigation -->
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchTab('upload')">
+                        📤 Upload New
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('originals')">
+                        📂 Original Files
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('subsets')">
+                        📊 Date Ranges
+                    </button>
+                </div>
+                
+                <!-- Upload Tab -->
+                <div id="uploadTab" class="tab-pane active">
+                    <div class="upload-area">
+                        <input type="file" id="storageFileInput" accept=".json" style="display:none;">
+                        <div class="upload-drop-zone" onclick="document.getElementById('storageFileInput').click()">
+                            <p>📁 Click or drag location-history.json here</p>
+                        </div>
+                        
+                        <!-- Merge option -->
+                        <div id="mergeOptions" style="display:none;">
+                            <label>
+                                <input type="checkbox" id="mergeCheck"> 
+                                Merge with existing file
+                            </label>
+                            <select id="mergeSelect" style="display:none;">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Original Files Tab -->
+                <div id="originalsTab" class="tab-pane" style="display:none;">
+                    <div id="originalFilesList" class="data-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Subsets Tab -->
+                <div id="subsetsTab" class="tab-pane" style="display:none;">
+                    <div id="subsetsList" class="data-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <div class="storage-info">
+                    <span id="storageInfo">Storage: calculating...</span>
+                </div>
+                <button onclick="clearAllStorage()" class="danger-btn">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- END OF NEW STORAGE MANAGER HTML -->
+    
+    <!-- YOUR EXISTING CONTENT CONTINUES BELOW -->
+
     <div class="container">
         <div class="header">
             <h1>Unified Location Processor</h1>
@@ -1016,5 +1114,10 @@
             }
         }
     </script>
+    <!-- Storage Manager Scripts -->
+    <script src="{{ url_for('static', filename='js/storage-manager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/storage-integration.js') }}"></script>
+    
+   
 </body>
 </html>

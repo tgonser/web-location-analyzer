@@ -1,0 +1,32 @@
+## Summary: Distance/Duration Filter Bug Fix
+
+**The Problem:**
+Your distance threshold (e.g., 6000m) and duration threshold (e.g., 8000s) aren't working because the `unified_app.py` file has a stub implementation that doesn't actually apply these filters. 
+
+**Where the bug is:**
+In `unified_app.py`, the `LocationProcessor.process_file()` method (around line 236-243) just passes all entries through without filtering:
+```python
+# Simplified processing - in real version would call process_entry
+processed_entries.append(entry)  # <- This adds EVERYTHING
+```
+
+**What needs to be done:**
+
+1. **Copy the working filter methods** from `parser_app.py` into `unified_app.py`:
+   - `process_entry()` - Routes to the appropriate processor
+   - `process_activity()` - Filters activities by distance threshold
+   - `process_visit()` - Filters visits by duration and probability thresholds  
+   - `process_timeline_path()` - Filters timeline points by distance between points
+   - `sample_points()` - Intelligent sampling of timeline paths
+
+2. **Replace the stub loop** in `process_file()` with:
+   ```python
+   for entry in relevant_entries:
+       processed = self.process_entry(entry, settings)
+       if processed:  # Only add if it passes the filters
+           processed_entries.append(processed)
+   ```
+
+3. **Test with your thresholds** (6000m, 8000s) to verify filtering works
+
+The filters exist in `parser_app.py` but were never implemented in `unified_app.py`. It's essentially running without any distance/duration filtering despite showing those options in the UI.
