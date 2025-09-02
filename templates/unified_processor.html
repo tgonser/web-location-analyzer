@@ -696,6 +696,9 @@
                 <button type="button" class="btn btn-secondary" onclick="toggleUploadMode()" id="toggle-mode-btn">
                     Use Pre-parsed File Instead
                 </button>
+                <button type="button" class="btn btn-secondary" onclick="showAllSavedData()" style="margin-left: 15px;">
+                    📁 Manage Saved Files
+                 </button>   
                 {% if cache_stats.entries > 0 %}
                 <button type="button" class="btn btn-secondary" onclick="showCacheManager()" style="margin-left: 15px;">
                     Manage Cache ({{ cache_stats.entries }} entries)
@@ -719,9 +722,10 @@
     </div>
 
     <script>
-        let currentTaskId = null;
+        window.currentTaskId = null;  // Instead of let currentTaskId = null;
         let currentStep = 1;
         let uploadMode = 'raw'; // 'raw' or 'parsed'
+        let parsedFileName = null; // Store the name of the raw file
 
         // File upload handling
         document.getElementById('raw-file').addEventListener('change', function(e) {
@@ -729,6 +733,7 @@
             if (file) {
                 const info = document.getElementById('file-info');
                 info.textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+                parsedFileName = file.name; // Store filename for later
             }
         });
 
@@ -876,28 +881,85 @@
             });
         });
 
+        async function saveParsedDataToStorage(taskId, parseStats, parseDates) {
+            // Fetch the parsed data from the server
+            try {
+                const response = await fetch(`/get_parsed_data/${taskId}`);
+                if (!response.ok) {
+                    console.error('Failed to fetch parsed data:', response.status);
+                    return;
+                }
+                
+                const parsedData = await response.json();
+                
+                if (window.storageManager && parsedData) {
+                    // Generate a meaningful filename
+                    const dateStr = new Date().toISOString().split('T')[0];
+                    const fileName = parsedFileName ? 
+                        `parsed_${parsedFileName.replace('.json', '')}_${dateStr}.json` : 
+                        `parsed_${dateStr}.json`;
+                    
+                    // Save to IndexedDB
+                    await window.storageManager.saveOriginalFile(
+                        fileName,
+                        parsedData,
+                        {
+                            parseDate: new Date().toISOString(),
+                            dateRange: parseDates,
+                            stats: parseStats,
+                            taskId: taskId
+                        }
+                    );
+                    
+                    console.log('Parsed data saved to IndexedDB:', fileName);
+                    
+                    // Show the quick access panel
+                    document.getElementById('quickAccessPanel').style.display = 'block';
+                    
+                    // Refresh data sources list if the function exists
+                    if (typeof refreshDataSourcesList === 'function') {
+                        await refreshDataSourcesList();
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to save parsed data:', error);
+            }
+        }
+
         function pollProgress(phase) {
             if (!currentTaskId) return;
             
             fetch(`/progress/${currentTaskId}`)
                 .then(response => response.json())
-                .then(data => {
+                .then(async data => {
                     updateProgress(phase, data);
-                    
                     if (data.status === 'SUCCESS') {
                         if (phase === 'parse' && data.step === 'parsed') {
                             // Parsing complete, move to analysis
                             showStatus('Parsing complete! Ready for analysis.', 'success');
                             moveToStep(2);
                             document.getElementById('analyze-btn').disabled = false;
+                            
                             // Auto-populate analysis dates from parsing dates
                             if (data.parse_dates_used) {
                                 document.querySelector('input[name="start_date"]').value = data.parse_dates_used.from;
                                 document.querySelector('input[name="end_date"]').value = data.parse_dates_used.to;
                                 console.log('Analysis dates auto-filled from parsing range:', data.parse_dates_used.from, 'to', data.parse_dates_used.to);
                             }
+                            
+                            // ONLY save to storage if this was a NEW parse from raw data
+                            if (uploadMode === 'raw' && document.getElementById('raw-file').files.length > 0) {
+                                // This was a fresh parse from raw file - save it
+                                await saveParsedDataToStorage(
+                                    currentTaskId, 
+                                    data.parse_stats || {}, 
+                                    data.parse_dates_used || {}
+                                );
+                            }
+                            // If uploadMode === 'parsed' or file came from storage, don't save again
+                            
                         } else if (phase === 'analyze' && data.analysis_complete) {
-                            // Analysis complete, redirect to results - BUG FIX #1: Use standard redirect
+                            // Analysis complete, redirect to results
                             showStatus('Analysis complete! Redirecting to results...', 'success');
                             
                             setTimeout(() => {
@@ -1118,6 +1180,34 @@
     <script src="{{ url_for('static', filename='js/storage-manager.js') }}"></script>
     <script src="{{ url_for('static', filename='js/storage-integration.js') }}"></script>
     
+    <!-- Check for saved data after storage manager loads -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for storage manager to be initialized by storage-integration.js
+        setTimeout(async () => {
+            if (window.storageManager && window.storageManager.db) {
+                try {
+                    const sources = await window.storageManager.getAvailableDataSources();
+                    console.log('Found saved data sources:', sources);
+                    
+                    if (sources.originals.length > 0 || sources.subsets.length > 0) {
+                        // Show the quick access panel if we have saved data
+                        document.getElementById('quickAccessPanel').style.display = 'block';
+                        
+                        // Refresh the lists if the function exists
+                        if (typeof refreshDataSourcesList === 'function') {
+                            await refreshDataSourcesList();
+                        }
+                    }
+                } catch (e) {
+                    console.log('No saved data yet, this is normal for first use');
+                }
+            } else {
+                console.log('Storage manager not ready yet');
+            }
+        }, 1000); // Wait 1 second for storage-integration.js to initialize
+    });
+    </script>
    
 </body>
 </html>

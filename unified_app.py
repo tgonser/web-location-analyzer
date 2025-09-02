@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_file, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file, jsonify, send_from_directory
 import os
 import json
 from datetime import date, datetime
@@ -13,7 +13,6 @@ import multiprocessing
 import logging
 from typing import Dict
 
-
 # Import the existing modules - these need to be copied from your LAweb app
 try:
     from modern_analyzer_bridge import process_location_file  # Use modern analyzer
@@ -25,12 +24,17 @@ except ImportError as e:
     print("Make sure to copy modern_analyzer_bridge.py, geo_utils.py, and csv_exporter.py from your LAweb app")
     ANALYZER_AVAILABLE = False
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.secret_key = 'change-this-secret-key-in-production'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['PROCESSED_FOLDER'] = 'processed'
 app.config['OUTPUT_FOLDER'] = 'outputs'
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max file size
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
+
 
 # Ensure directories exist
 for folder in ['uploads', 'processed', 'outputs', 'config']:
@@ -707,6 +711,42 @@ def index():
                          today=date.today().strftime('%Y-%m-%d'),
                          config=config,
                          cache_stats=cache_stats)
+@app.route('/test')
+def test():
+    import os
+    static_path = os.path.join(app.root_path, 'static', 'js')
+    files = os.listdir(static_path) if os.path.exists(static_path) else []
+    return f"Static path: {static_path}<br>Files: {files}"
+
+@app.route('/get_parsed_data/<task_id>')
+def get_parsed_data(task_id):
+    """Return the parsed JSON data for a given task_id"""
+    # Look in the PROCESSED_FOLDER, not parsed_data
+    parsed_file = None
+    
+    # Check for files with the task_id in the name
+    for filename in os.listdir(app.config['PROCESSED_FOLDER']):
+        if task_id in filename and filename.endswith('.json'):
+            parsed_file = filename
+            break
+    
+    # If not found by task_id, try the most recent file
+    if not parsed_file:
+        json_files = [f for f in os.listdir(app.config['PROCESSED_FOLDER']) 
+                      if f.endswith('.json')]
+        if json_files:
+            json_files.sort(key=lambda x: os.path.getmtime(
+                os.path.join(app.config['PROCESSED_FOLDER'], x)), reverse=True)
+            parsed_file = json_files[0]
+    
+    if parsed_file:
+        filepath = os.path.join(app.config['PROCESSED_FOLDER'], parsed_file)
+        with open(filepath, 'r') as f:
+            data = json.load(f)
+            return jsonify(data)
+    
+    return jsonify({"error": "Parsed data not found"}), 404
+
 @app.route('/process_subset', methods=['POST'])
 def process_subset():
     """Process a pre-filtered subset from storage"""
