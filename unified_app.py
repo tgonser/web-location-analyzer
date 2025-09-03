@@ -69,6 +69,47 @@ def add_diagnostic(task_id: str, message: str, level: str = "INFO"):
         })
         # Keep only last 100 messages
         parser_progress_store[task_id]['diagnostics'] = diagnostics[-100:]
+# Add these three helper functions right after your imports section
+
+def generate_readable_filename(from_date, to_date, distance, probability, duration):
+    """Generate human-readable filename for parsed files"""
+    from_str = datetime.strptime(from_date, '%Y-%m-%d').strftime('%m-%d-%y')
+    to_str = datetime.strptime(to_date, '%Y-%m-%d').strftime('%m-%d-%y')
+    filename = f"{from_str}__{to_str}_parsed_{int(distance)}_{probability}_{int(duration)}.json"
+    return filename
+
+def save_parsed_with_proper_formatting(filepath, data):
+    """Save JSON with proper formatting and line endings"""
+    with open(filepath, 'w', encoding='utf-8', newline='') as f:
+        json_str = json.dumps(data, indent=2, ensure_ascii=False)
+        if os.name == 'nt':  # Windows
+            json_str = json_str.replace('\n', '\r\n')
+        f.write(json_str)
+
+def add_metadata_to_parsed(data, settings, stats):
+    """Add metadata to parsed file for easy identification"""
+    metadata = {
+        "_metadata": {
+            "version": "1.0",
+            "parsedAt": datetime.now().isoformat(),
+            "dateRange": {
+                "from": settings['from_date'],
+                "to": settings['to_date']
+            },
+            "filterSettings": {
+                "distanceThreshold": settings['distance_threshold'],
+                "probabilityThreshold": settings['probability_threshold'],
+                "durationThreshold": settings['duration_threshold']
+            },
+            "statistics": stats,
+            "isParsed": True
+        }
+    }
+    
+    if isinstance(data, list):
+        return {"_metadata": metadata["_metadata"], "timelineObjects": data}
+    else:
+        return {**metadata, **data}
 
 class LocationProcessor:
     """Production-ready location processor with optimized timeline handling."""
@@ -828,11 +869,26 @@ def upload_raw():
             result = processor.process_file(upload_path, settings)
             
             if result.get('success'):
-                # Save parsed output
-                output_filename = f"{task_id}_parsed.json"
+                # Add metadata to the parsed data
+                metadata_enriched_data = add_metadata_to_parsed(
+                    result['data'], 
+                    settings, 
+                    result['stats']
+                )
+                
+                # Generate human-readable filename
+                output_filename = generate_readable_filename(
+                    settings['from_date'],
+                    settings['to_date'],
+                    settings['distance_threshold'],
+                    settings['probability_threshold'],
+                    settings['duration_threshold']
+                )
+    
                 output_file = os.path.join(app.config['PROCESSED_FOLDER'], output_filename)
-                with open(output_file, 'w', encoding='utf-8') as f:
-                    json.dump(result['data'], f, indent=1)
+    
+                # Save with proper formatting
+                save_parsed_with_proper_formatting(output_file, metadata_enriched_data)
                 
                 unified_progress[task_id].update({
                     'step': 'parsed',
@@ -886,62 +942,95 @@ def upload_parsed():
     if file.filename == '' or not file.filename.lower().endswith('.json'):
         return jsonify({'error': 'Please upload a JSON file'}), 400
     
-    # Save file
-    filename = secure_filename(file.filename)
+    # Generate task ID
     task_id = str(uuid.uuid4())
-    upload_path = os.path.join(app.config['PROCESSED_FOLDER'], f"{task_id}_{filename}")
-    file.save(upload_path)
     
-    # BUG FIX #5: Initialize progress with proper stats and diagnostics
+    # Read file content to check if already parsed
+    file_content = file.read()
+    file.seek(0)
+    
     try:
-        # Load the file to get basic stats
-        with open(upload_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        data = json.loads(file_content)
         
-        # Count entries
-        if isinstance(data, list):
-            entry_count = len(data)
-        elif isinstance(data, dict) and 'timelineObjects' in data:
-            entry_count = len(data['timelineObjects'])
-        elif isinstance(data, dict) and 'locations' in data:
-            entry_count = len(data['locations'])
-        else:
-            entry_count = 1
+        # Check if already parsed (has metadata)
+        is_already_parsed = isinstance(data, dict) and '_metadata' in data and data['_metadata'].get('isParsed', False)
+        
+        if is_already_parsed:
+            # DON'T CREATE A NEW FILE - just store in memory
+            print(f"DEBUG: Pre-parsed file detected, storing in memory only")
             
-        # Initialize progress for analysis-only workflow with proper diagnostics array
-        unified_progress[task_id] = {
-            'step': 'ready_for_analysis',
-            'status': 'SUCCESS',
-            'message': 'Parsed file uploaded successfully. Ready for analysis.',
-            'percentage': 100,
-            'parsed_file': upload_path,
-            'parse_complete': True,
-            'analysis_complete': False,
-            'diagnostics': [  # Initialize empty diagnostics array
-                {
+            # Extract metadata for progress tracking
+            metadata = data['_metadata']
+            date_range = metadata.get('dateRange', {})
+            stats = metadata.get('statistics', {})
+            
+            # Get entry count
+            if 'timelineObjects' in data:
+                entry_count = len(data['timelineObjects'])
+            elif isinstance(data, list):
+                entry_count = len(data)
+            else:
+                entry_count = stats.get('final_count', stats.get('finalCount', 0))
+            
+            # Set up progress WITHOUT creating a file
+            unified_progress[task_id] = {
+                'step': 'ready_for_analysis',
+                'status': 'SUCCESS',
+                'message': 'Pre-parsed file loaded. Ready for analysis.',
+                'percentage': 100,
+                'parsed_data': data,  # Store in memory
+                'parse_complete': True,
+                'analysis_complete': False,
+                'is_already_parsed': True,
+                'parse_dates_used': date_range,
+                'diagnostics': [{
                     'timestamp': datetime.now().strftime('%H:%M:%S'),
-                    'message': f'Pre-parsed file uploaded: {filename} ({entry_count} entries)'
-                }
-            ],
-            'parse_stats': {
-                'total_entries': entry_count,
-                'final_count': entry_count,
-                'activities': 0,  # Will be updated during analysis
-                'visits': 0,
-                'timeline_paths': 0,
-                'date_filtered': entry_count
+                    'message': f'Pre-parsed file loaded: {file.filename} ({entry_count} entries)',
+                    'level': 'INFO'
+                }],
+                'parse_stats': stats
             }
-        }
-        
+            
+            # No file saved!
+            print(f"DEBUG: No new file created, data stored in memory for task {task_id}")
+            
+            return jsonify({
+                'task_id': task_id,
+                'message': 'Pre-parsed file loaded successfully',
+                'step': 'ready_for_analysis',
+                'is_parsed': True
+            })
+            
+        else:
+            # Not parsed yet - this is a raw file that needs parsing
+            print(f"DEBUG: Raw file detected, saving for parsing")
+            
+            # Save it for parsing
+            upload_path = os.path.join(app.config['PROCESSED_FOLDER'], f"{task_id}_{secure_filename(file.filename)}")
+            file.save(upload_path)
+            
+            # Set up for parsing
+            unified_progress[task_id] = {
+                'step': 'needs_parsing',
+                'status': 'SUCCESS',
+                'message': 'File uploaded. Needs parsing.',
+                'percentage': 0,
+                'parsed_file': upload_path,
+                'parse_complete': False,
+                'analysis_complete': False,
+                'is_already_parsed': False
+            }
+            
+            return jsonify({
+                'task_id': task_id,
+                'message': 'File needs parsing',
+                'step': 'needs_parsing',
+                'is_parsed': False
+            })
+            
     except Exception as e:
         print(f"DEBUG: Error processing uploaded file: {e}")
         return jsonify({'error': f'Failed to process uploaded file: {str(e)}'}), 400
-    
-    return jsonify({
-        'task_id': task_id,
-        'message': 'Parsed file uploaded successfully',
-        'step': 'ready_for_analysis'
-    })
 
 @app.route('/analyze/<task_id>', methods=['POST'])
 def analyze(task_id):
@@ -951,21 +1040,35 @@ def analyze(task_id):
     
     progress_data = unified_progress[task_id]
     
-    if not progress_data.get('parse_complete') or not progress_data.get('parsed_file'):
+    # Check for either parsed file OR in-memory parsed data
+    if not progress_data.get('parse_complete'):
         return jsonify({'error': 'No parsed data available for analysis'}), 400
     
-    # Get analysis settings
+    # Get analysis settings from the request
     data = request.get_json() or {}
     
+    # Extract all the variables we need from the request data
     start_date = data.get('start_date', '2024-01-01')
     end_date = data.get('end_date', date.today().strftime('%Y-%m-%d'))
     geoapify_key = data.get('geoapify_key', '')
     google_key = data.get('google_key', '')
     
-    if not geoapify_key.strip():
-        return jsonify({'error': 'Geoapify API key is required for analysis'}), 400
+    # Get the parsed data source
+    if 'parsed_data' in progress_data:
+        # Use in-memory data
+        parsed_data_source = progress_data['parsed_data']
+        # Save it temporarily for the analyzer
+        temp_file = os.path.join(app.config['PROCESSED_FOLDER'], f"temp_{task_id}.json")
+        with open(temp_file, 'w', encoding='utf-8') as f:
+            json.dump(parsed_data_source, f, indent=2)
+        parsed_file_path = temp_file
+    elif progress_data.get('parsed_file'):
+        # Use file path
+        parsed_file_path = progress_data['parsed_file']
+    else:
+        return jsonify({'error': 'No parsed data available'}), 400
     
-    # Save config for next time - BUG FIX #2
+    # Save config for next time
     config = load_config()
     config.update({
         'last_start_date': start_date,
@@ -992,7 +1095,7 @@ def analyze(task_id):
     os.makedirs(output_dir, exist_ok=True)
     
     def analyze_in_background():
-        # Track geocoding stats for BUG FIX #6
+        # Track geocoding stats
         geocoding_stats = {'cache_hits': 0, 'api_calls': 0, 'total_geocoded': 0}
         
         def analysis_log(msg):
@@ -1004,30 +1107,24 @@ def analyze(task_id):
                 if 'diagnostics' not in unified_progress[task_id]:
                     unified_progress[task_id]['diagnostics'] = []
                 
-                # BUG FIX #6: Better parsing of geocoding messages
+                # Better parsing of geocoding messages
                 enhanced_msg = msg
                 
                 # Look for cache/API statistics in the message
                 if 'from cache' in msg.lower() and 'from api' in msg.lower():
-                    # Message already contains cache/API breakdown - use as is
                     enhanced_msg = msg
                 elif 'Geocoded' in msg and 'locations' in msg:
                     try:
-                        # Extract total number
                         import re
                         numbers = re.findall(r'\d+', msg)
                         if numbers:
                             total = int(numbers[0])
                             geocoding_stats['total_geocoded'] = total
                             
-                            # Try to get actual cache stats from geo_utils if available
                             cache_hits = 0
                             api_calls = 0
                             
-                            # Check if we can get real stats from the cache
                             if ANALYZER_AVAILABLE and 'geo_cache' in globals():
-                                # This would need to be implemented in geo_utils to track stats
-                                # For now, we'll make a reasonable estimate
                                 cache_hits = int(total * 0.6)  # Assume 60% cache hits
                                 api_calls = total - cache_hits
                             
@@ -1081,8 +1178,9 @@ def analyze(task_id):
                     analysis_log("Warning: Enhanced geocoding statistics not available")
             
             # Run the location analysis using existing analyzer
+            # Use parsed_file_path instead of progress_data['parsed_file']
             result = process_location_file(
-                progress_data['parsed_file'],
+                parsed_file_path,  # Changed from progress_data['parsed_file']
                 start_dt,
                 end_dt,
                 output_dir,
@@ -1118,17 +1216,15 @@ def analyze(task_id):
             analysis_log("Creating HTML views of results...")
             create_html_views(output_dir, generated_files, task_id)
             
-            # BUG FIX #3: Extract real stats from result or CSV files
+            # Extract real stats from result or CSV files
             analysis_stats = progress_data.get('parse_stats', {}).copy()
             
-            # Update with results from the modern analyzer - FIX FOR ZERO STATS
+            # Update with results from the modern analyzer
             if result and 'parse_stats' in result:
-                # Merge parse_stats from the analyzer result
                 for key, value in result['parse_stats'].items():
-                    if value > 0:  # Only update if we have real data
+                    if value > 0:
                         analysis_stats[key] = value
                 
-                # Also include final count
                 if 'final_count' in result:
                     analysis_stats['final_count'] = result['final_count']
             
@@ -1137,7 +1233,6 @@ def analyze(task_id):
                 city_csv = os.path.join(output_dir, 'by_city_location_days.csv')
                 if os.path.exists(city_csv):
                     df = pd.read_csv(city_csv)
-                    # Use the larger of the two counts (CSV records vs analyzer count)
                     analysis_stats['final_count'] = max(analysis_stats.get('final_count', 0), len(df))
                     if 'Fractional Days' in df.columns:
                         analysis_stats['total_days'] = df['Fractional Days'].sum()
@@ -1148,8 +1243,8 @@ def analyze(task_id):
             # Final completion message
             analysis_log("Analysis completed successfully!")
             
-            # Log the final statistics that will be shown
-            analysis_log(f"Final stats: {analysis_stats['activities']} activities, {analysis_stats['visits']} visits, {analysis_stats['timeline_paths']} timeline paths, {analysis_stats['final_count']} location points")
+            # Log the final statistics
+            analysis_log(f"Final stats: {analysis_stats.get('activities', 0)} activities, {analysis_stats.get('visits', 0)} visits, {analysis_stats.get('timeline_paths', 0)} timeline paths, {analysis_stats.get('final_count', 0)} location points")
             
             # Update final progress
             unified_progress[task_id].update({
@@ -1161,8 +1256,15 @@ def analyze(task_id):
                 'output_dir': os.path.basename(output_dir),
                 'generated_files': generated_files,
                 'result': result,
-                'analysis_stats': analysis_stats  # This should now have real values
+                'analysis_stats': analysis_stats
             })
+            
+            # Clean up temp file if we created one
+            if 'parsed_data' in progress_data and os.path.exists(parsed_file_path):
+                try:
+                    os.remove(parsed_file_path)
+                except:
+                    pass
             
         except Exception as e:
             error_msg = f'Analysis failed: {str(e)}'

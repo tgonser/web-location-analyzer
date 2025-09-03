@@ -881,50 +881,99 @@
             });
         });
 
-        async function saveParsedDataToStorage(taskId, parseStats, parseDates) {
-            // Fetch the parsed data from the server
-            try {
-                const response = await fetch(`/get_parsed_data/${taskId}`);
-                if (!response.ok) {
-                    console.error('Failed to fetch parsed data:', response.status);
-                    return;
-                }
-                
-                const parsedData = await response.json();
-                
-                if (window.storageManager && parsedData) {
-                    // Generate a meaningful filename
-                    const dateStr = new Date().toISOString().split('T')[0];
-                    const fileName = parsedFileName ? 
-                        `parsed_${parsedFileName.replace('.json', '')}_${dateStr}.json` : 
-                        `parsed_${dateStr}.json`;
-                    
-                    // Save to IndexedDB
-                    await window.storageManager.saveOriginalFile(
-                        fileName,
-                        parsedData,
-                        {
-                            parseDate: new Date().toISOString(),
-                            dateRange: parseDates,
-                            stats: parseStats,
-                            taskId: taskId
-                        }
-                    );
-                    
-                    console.log('Parsed data saved to IndexedDB:', fileName);
-                    
-                    // Show the quick access panel
-                    document.getElementById('quickAccessPanel').style.display = 'block';
-                    
-                    // Refresh data sources list if the function exists
-                    if (typeof refreshDataSourcesList === 'function') {
-                        await refreshDataSourcesList();
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to save parsed data:', error);
-            }
+    async function saveParsedDataToStorage(taskId, parseStats, parseDates) {
+        // Don't save if this is a parsed file being re-analyzed
+        if (window.dataFromStorage || window.isLoadingParsedFile) {
+            console.log('DEBUG: Skipping save - processing existing parsed file');
+            return;
         }
+        
+        // Don't save if we're in 'parsed' upload mode
+        if (uploadMode === 'parsed') {
+            console.log('DEBUG: Skipping save - uploaded pre-parsed file');
+            return;
+        }
+        
+        // Only save if we actually parsed a raw master file
+        if (uploadMode !== 'raw' || !document.getElementById('raw-file').files.length) {
+            console.log('DEBUG: Skipping save - no raw file was parsed');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/get_parsed_data/${taskId}`);
+            if (!response.ok) {
+                console.error('Failed to fetch parsed data:', response.status);
+                return;
+            }
+            
+            const parsedData = await response.json();
+            
+            // Ensure the parsed data has the proper metadata structure
+            if (!parsedData._metadata) {
+                parsedData._metadata = {};
+            }
+            
+            // Mark this as a parsed file
+            parsedData._metadata.isParsed = true;
+            parsedData._metadata.version = "1.0";
+            parsedData._metadata.parsedAt = new Date().toISOString();
+            
+            if (!parsedData._metadata.dateRange && parseDates) {
+                parsedData._metadata.dateRange = {
+                    from: parseDates.from || parseDates.start,
+                    to: parseDates.to || parseDates.end
+                };
+            }
+            
+            if (!parsedData._metadata.statistics && parseStats) {
+                parsedData._metadata.statistics = parseStats;
+            }
+            
+            console.log('DEBUG: Saving newly parsed file to storage');
+            
+            if (window.storageManager && parsedData) {
+                // Generate filename that clearly indicates this is a parsed file
+                const dateRange = parsedData._metadata.dateRange || parseDates || {};
+                const fromDate = dateRange.from || dateRange.start || 'unknown';
+                const toDate = dateRange.to || dateRange.end || 'unknown';
+                
+                // Format dates for filename
+                const fromStr = fromDate !== 'unknown' ? 
+                    new Date(fromDate).toISOString().split('T')[0] : 'unknown';
+                const toStr = toDate !== 'unknown' ? 
+                    new Date(toDate).toISOString().split('T')[0] : 'unknown';
+                
+                const fileName = `parsed_${fromStr}_to_${toStr}.json`;
+                
+                // Save as a parsed file (not as master)
+                await window.storageManager.saveOriginalFile(
+                    fileName,
+                    parsedData,
+                    {
+                        parseDate: new Date().toISOString(),
+                        dateRange: parseDates,
+                        stats: parseStats,
+                        taskId: taskId,
+                        isParsed: true,  // Critical flag
+                        fileType: 'parsed'  // Critical flag
+                    }
+                );
+                
+                console.log('New parsed file saved:', fileName);
+                
+                // Show the quick access panel
+                document.getElementById('quickAccessPanel').style.display = 'block';
+                
+                // Refresh data sources list
+                if (typeof refreshDataSourcesList === 'function') {
+                    await refreshDataSourcesList();
+                }
+            }
+        } catch (error) {
+            console.error('Failed to save parsed data:', error);
+        }
+    }
 
         function pollProgress(phase) {
             if (!currentTaskId) return;
